@@ -20,7 +20,14 @@ kaplay({
 })
 
 loadFont("pixel", "/fonts/Minecraft.ttf")
+loadFont("bigpixel", "/fonts/upheavtt.ttf")
 loadSprite("logo", "/sprites/logo.png")
+loadSprite("fade", "/sprites/fade.png")
+loadSprite("chaotitle", "/sprites/chão.png")
+loadSprite("p1pin", "sprites/Players/HUD Arrow/P1.png")
+loadSprite("p2pin", "sprites/Players/HUD Arrow/P2.png")
+
+
 
 scene("title", () => {
 
@@ -42,8 +49,9 @@ scene("title", () => {
         "player"
     ])
 
+
     const infotext = add([
-        text("PULE PARA PREPARAR\nAGAIXE PARA DESPREPARAR\n\nW: Pulo   |  Cima: Pulo\nS: Agaixar   |  Cima: Agaixar", {
+        text("PULE PARA PREPARAR\nAGAIXE PARA DESPREPARAR\n\n W: Pulo         |  Cima: Pulo       \nS: Agaixar    |  Baixo: Agaixar", {
             font: "pixel",
             size: 8,
             align: "center"
@@ -56,8 +64,8 @@ scene("title", () => {
 
     const countdowntext = add([
         text("3", {
-            font: "pixel",
-            size: 64,
+            font: "bigpixel",
+            size: 48,
             align: "center"
         }),
         color("#ffffff"),
@@ -71,7 +79,8 @@ scene("title", () => {
             size: 16,
         }),
         color("#ba2335"),
-        pos(10, 90),
+        pos(10, 220),
+        z(5),
     ])
 
     const p2readytxt = add([
@@ -81,14 +90,32 @@ scene("title", () => {
             size: 16,
         }),
         color("#ba2335"),
-        pos(cw - 120, 90),
+        pos(cw - 120, 220),
+        z(5),
     ])
 
     const logo = add([
         sprite("logo"),
         pos(cw / 2, 55),
         anchor("center"),
+        z(10),
         "logo",
+    ])
+
+    const fade = add([
+        sprite("fade"),
+        pos(0,0),
+        anchor("topleft"),
+        z(9),
+        "fade",
+        opacity(0),
+    ])
+
+    const chao = add([
+        sprite("chaotitle"),
+        pos(cw / 2, 240),
+        anchor("bot"),
+        "chaotitle",
     ])
 
     const p2 = add([
@@ -101,6 +128,28 @@ scene("title", () => {
         "player"
     ])
 
+
+    const p1pin = add([
+        sprite("p1pin"),
+        pos(cw / 2, ch / 2),
+        anchor("bot"),
+        "p1pin"
+    ])
+
+    const p2pin = add([
+        sprite("p2pin"),
+        pos(0, 0),
+        anchor("bot"),
+        "p2pin",
+    ])
+
+    onUpdate(() => {
+        p1pin.pos.x = p1.pos.x
+        p1pin.pos.y = p1.pos.y - 45
+        p2pin.pos.x = (p2.pos.x)
+        p2pin.pos.y = (p2.pos.y - 45)
+    })
+
     //  STATE (FIXED) 
     var countdown = false
     let countdownend = false
@@ -108,7 +157,7 @@ scene("title", () => {
     let countdownId = 0
 
     function startCountdown() {
-        if (countdownend){
+        if (countdownend) {
             countdowntext.hidden = true
             return
         }
@@ -131,7 +180,7 @@ scene("title", () => {
                 countdownnum = 1
                 console.log(countdownnum)
                 countdowntext.text = String(countdownnum)
-                
+
                 wait(1, () => {
                     if ((!countdown || myId !== countdownId || !p1.ready || !p2.ready) && !countdownend) return
                     console.log("racestart!")
@@ -258,10 +307,12 @@ scene("title", () => {
     })
 
     onUpdate(() => {
-         if (p2.ready) {p2readytxt.pos.x = cw - 102 }else{p2readytxt.pos.x = cw - 120}})
+        if (p2.ready) { p2readytxt.pos.x = cw - 102 } else { p2readytxt.pos.x = cw - 120 }
+    })
 
     onUpdate(() => {
-         if (p1.ready) {p1readytxt.pos.x = 32 }else{p1readytxt.pos.x = 10}})
+        if (p1.ready) { p1readytxt.pos.x = 32 } else { p1readytxt.pos.x = 10 }
+    })
 
     // contagem
     onUpdate(() => {
@@ -281,20 +332,20 @@ scene("title", () => {
             countdownId++
         }
     })
-    let logomove = false
-    let logomoveval= 100
+    let logomoved = false
+    let logotary = 120
     onUpdate(() => {
-        if(countdownend){
+        if (countdownend) {
             infotext.hidden = true
             p1readytxt.hidden = true
             p2readytxt.hidden = true
-            if (!logomove){
-                if (logomoveval <= 0){logomove = true}
-                while (logomoveval > 0) {
-                    logo.move(0,logomoveval)
-                    logomoveval += -20
-                }
-            }
+        }
+    })
+
+    onUpdate(() => {
+        if (countdownend) {
+                logo.pos.y = lerp(logo.pos.y, logotary, dt() * 4)
+                fade.opacity = lerp(fade.opacity, 1, dt() * 3)
         }
     })
 })
