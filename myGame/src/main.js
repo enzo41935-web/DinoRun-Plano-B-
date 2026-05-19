@@ -1,90 +1,171 @@
+// Variaveis 1
+
 const cw = 480
 const ch = 240
-const x_spawnlocation = 50
+const x_spawnlocation = 65
 const y_spawnlocation = ch
 
-
 const default_gravity = 900
-var default_jump = 325
+let default_jump = 325
 
-var p1ground = false
-var p2ground = false
+let p1ground = false
+let p2ground = false
 
 kaplay({
-  width: 480,
-  height: 240,
-  canvas: document.getElementById("game"),
-  background: [34, 32, 52] ,
-  scale: 2,
+    width: 480,
+    height: 240,
+    canvas: document.getElementById("game"),
+    background: [34, 32, 52],
+    scale: 2,
 })
 
-scene("main", () => {
+loadFont("pixel", "/fonts/Minecraft.ttf")
+loadSprite("logo", "/sprites/logo.png")
 
-const floor = add([
-rect(480, 30),
-pos(0, 210),
-area(),
-color(255, 215, 130),
-"floor",
-])
+scene("title", () => {
 
-const p1 = add([
-rect(20,40),
-pos(x_spawnlocation,y_spawnlocation),
-color(255,0,0),
-anchor("bot"),
-area(),
-"player1",
-"player"
-])
+    const floor = add([
+        rect(480, 30),
+        pos(0, 210),
+        area(),
+        color(255, 255, 255),
+        "floor",
+    ])
 
-const p2 = add([
-    rect(20,40),
-    pos(30 + x_spawnlocation,y_spawnlocation ),
-    color(0,0,255),
-    anchor("bot"),
-    area(),
-    "player2",
-    "player"
-])
+    const p1 = add([
+        rect(20, 40),
+        pos(x_spawnlocation, y_spawnlocation),
+        color("#99e550"),
+        anchor("bot"),
+        area(),
+        "player1",
+        "player"
+    ])
 
+    const infotext = add([
+        text("PULE PARA PREPARAR\nAGAIXE PARA DESPREPARAR\n\nW: Pulo   |  Cima: Pulo\nS: Agaixar   |  Cima: Agaixar", {
+            font: "pixel",
+            size: 8,
+            align: "center"
+        }),
+        color("#ffffff"),
+        pos(175, 120),
+    ])
 
+    infotext.hidden = true
 
-//  Player 1 
+    const countdowntext = add([
+        text("3", {
+            font: "pixel",
+            size: 64,
+            align: "center"
+        }),
+        color("#ffffff"),
+        pos((cw / 2) - 20, 120),
+    ])
+
+    const p1readytxt = add([
+        text("PREPARANDO", {
+            font: "pixel",
+            align: "center",
+            size: 16,
+        }),
+        color("#ba2335"),
+        pos(10, 90),
+    ])
+
+    const p2readytxt = add([
+        text("PREPARANDO", {
+            font: "pixel",
+            align: "center",
+            size: 16,
+        }),
+        color("#ba2335"),
+        pos(cw - 120, 90),
+    ])
+
+    const logo = add([
+        sprite("logo"),
+        pos(cw / 2, 55),
+        anchor("center"),
+        "logo",
+    ])
+
+    const p2 = add([
+        rect(20, 40),
+        pos(cw - x_spawnlocation, y_spawnlocation),
+        color("#5b6ee1"),
+        anchor("bot"),
+        area(),
+        "player2",
+        "player"
+    ])
+
+    //  STATE (FIXED) 
+    var countdown = false
+    let countdownend = false
+    let countdownnum = 3
+    let countdownId = 0
+
+    function startCountdown() {
+        if (countdownend){
+            countdowntext.hidden = true
+            return
+        }
+        const myId = ++countdownId
+
+        countdown = true
+        countdownnum = 3
+        countdowntext.hidden = false
+        countdowntext.text = String(countdownnum)
+        console.log(countdownnum)
+        wait(1, () => {
+            if ((!countdown || myId !== countdownId || !p1.ready || !p2.ready) && !countdownend) return
+
+            countdownnum = 2
+            console.log(countdownnum)
+            countdowntext.text = String(countdownnum)
+
+            wait(1, () => {
+                if ((!countdown || myId !== countdownId || !p1.ready || !p2.ready) && !countdownend) return
+                countdownnum = 1
+                console.log(countdownnum)
+                countdowntext.text = String(countdownnum)
+                
+                wait(1, () => {
+                    if ((!countdown || myId !== countdownId || !p1.ready || !p2.ready) && !countdownend) return
+                    console.log("racestart!")
+                    countdowntext.hidden = true
+                    countdown = false
+                    countdownend = true
+                    // start race here
+                })
+            })
+        })
+    }
+
+    //  PLAYER 1 
     p1.grounded = false
     p1.crouched = false
     p1.gravity = default_gravity
     p1.vel = 0
     p1.jump = default_jump
+    p1.ready = false
 
-    onCollide("player1", "floor", () => {
-        p1.grounded = true
-    })
-
-    onCollideEnd("player1", "floor", () => {
-        p1.grounded = false
-    })
+    onCollide("player1", "floor", () => p1.grounded = true)
+    onCollideEnd("player1", "floor", () => p1.grounded = false)
 
     onKeyDown("w", () => {
-        if (p1.grounded) {
+        if (p1.grounded && !p1.crouched) {
             p1.vel = -p1.jump
-        p1.grounded = false
-    }
-    })
-
-    onUpdate(() => {
-        p1.vel += p1.gravity * dt()
-        p1.pos.y += p1.vel * dt()
-
-        if (p1.pos.y > ch-30) {
-            p1.pos.y = ch-30
-            p1.vel = 0
-            p1.grounded = true
-            }
+            if (!p1.ready) p1.ready = true
+            p1.grounded = false
+        }
     })
 
     onKeyDown("s", () => {
         p1.crouched = true
+        if (p1.ready) p1.ready = false
     })
 
     onKeyRelease("s", () => {
@@ -92,53 +173,55 @@ const p2 = add([
     })
 
     onUpdate(() => {
-        if (p1.crouched){
+        p1.vel += p1.gravity * dt()
+        p1.pos.y += p1.vel * dt()
+
+        if (p1.pos.y > ch - 30) {
+            p1.pos.y = ch - 30
+            p1.vel = 0
+            p1.grounded = true
+        }
+
+        if (p1.crouched) {
             p1.scale = vec2(1, 0.5)
-            p1.gravity = default_gravity*8
+            p1.gravity = default_gravity * 8
             p1.jump = 0
-        }else{
+        } else {
             p1.scale = vec2(1, 1)
             p1.gravity = default_gravity
             p1.jump = default_jump
         }
+
+        if (p1.ready) {
+            p1readytxt.color = rgb(153, 229, 80)
+            p1readytxt.text = "PRONTO!"
+        } else {
+            p1readytxt.color = rgb(186, 35, 53)
+            p1readytxt.text = "PREPARANDO"
+        }
     })
 
-
-//  Player 2
+    //  PLAYER 2 
     p2.grounded = false
     p2.crouched = false
     p2.gravity = default_gravity
     p2.vel = 0
     p2.jump = default_jump
+    p2.ready = false
 
-    onCollide("player2", "floor", () => {
-        p2.grounded = true
-    })
-
-    onCollideEnd("player2", "floor", () => {
-        p2.grounded = false
-    })
+    onCollide("player2", "floor", () => p2.grounded = true)
+    onCollideEnd("player2", "floor", () => p2.grounded = false)
 
     onKeyDown("up", () => {
-        if (p2.grounded) {
+        if (p2.grounded && !p2.crouched) {
             p2.vel = -p2.jump
-        p2.grounded = false
-    }
-    })
-
-    onUpdate(() => {
-        p2.vel += p2.gravity * dt()
-        p2.pos.y += p2.vel * dt()
-
-        if (p2.pos.y > ch-30) {
-            p2.pos.y = ch-30
-            p2.vel = 0
-            p2.grounded = true
-            }
+            if (!p2.ready) p2.ready = true
+        }
     })
 
     onKeyDown("down", () => {
         p2.crouched = true
+        if (p2.ready) p2.ready = false
     })
 
     onKeyRelease("down", () => {
@@ -146,16 +229,74 @@ const p2 = add([
     })
 
     onUpdate(() => {
-        if (p2.crouched){
+        p2.vel += p2.gravity * dt()
+        p2.pos.y += p2.vel * dt()
+
+        if (p2.pos.y > ch - 30) {
+            p2.pos.y = ch - 30
+            p2.vel = 0
+            p2.grounded = true
+        }
+
+        if (p2.crouched) {
             p2.scale = vec2(1, 0.5)
-            p2.gravity = default_gravity*8
+            p2.gravity = default_gravity * 8
             p2.jump = 0
-        }else{
+        } else {
             p2.scale = vec2(1, 1)
             p2.gravity = default_gravity
             p2.jump = default_jump
         }
+
+        if (p2.ready) {
+            p2readytxt.color = rgb(153, 229, 80)
+            p2readytxt.text = "PRONTO!"
+        } else {
+            p2readytxt.color = rgb(186, 35, 53)
+            p2readytxt.text = "PREPARANDO"
+        }
     })
 
+    onUpdate(() => {
+         if (p2.ready) {p2readytxt.pos.x = cw - 102 }else{p2readytxt.pos.x = cw - 120}})
+
+    onUpdate(() => {
+         if (p1.ready) {p1readytxt.pos.x = 32 }else{p1readytxt.pos.x = 10}})
+
+    // contagem
+    onUpdate(() => {
+        if (p1.ready && p2.ready && !countdownend) {
+            infotext.hidden = true
+
+            if (!countdown) {
+                startCountdown()
+            }
+
+        } else {
+            infotext.hidden = false
+            countdowntext.hidden = true
+
+            countdown = false
+            countdownnum = 3
+            countdownId++
+        }
+    })
+    let logomove = false
+    let logomoveval= 100
+    onUpdate(() => {
+        if(countdownend){
+            infotext.hidden = true
+            p1readytxt.hidden = true
+            p2readytxt.hidden = true
+            if (!logomove){
+                if (logomoveval <= 0){logomove = true}
+                while (logomoveval > 0) {
+                    logo.move(0,logomoveval)
+                    logomoveval += -20
+                }
+            }
+        }
+    })
 })
-go("main")
+
+go("title")
