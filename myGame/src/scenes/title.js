@@ -180,6 +180,8 @@ scene("title", () => {
 
     // GLOBAL PLAYERS
 
+    
+
     const x_players_spawnlocation = 65
     const y_players_spawnlocation = ch
     let default_gravity = 900

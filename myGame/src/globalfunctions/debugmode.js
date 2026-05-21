@@ -1,3 +1,8 @@
+import { p1die } from "../scenes/start.js";
+import { p2die } from "../scenes/start.js";
+
+// import { p1 } from "../scenes/start.js";
+// import { p2 } from "../scenes/start.js";
 export function debugmenu() {
     if (debugmode) {
         let paused = false;
@@ -15,6 +20,19 @@ export function debugmenu() {
                 destroyAll();
                 debug.paused = true
                 destroyAll();
+                const dedgametxt = add([
+                    text("GAME KILLED.", {
+                        font: "bigpixel",
+                        align: "left",
+                        size: 32,
+                    }),
+                    color("#ffffff"),
+                    pos(cw / 4, ch / 2.5),
+                    area(),
+                    opacity(1),
+                    z(102),
+                    outline(2, rgb(255, 0, 0)),
+                ])
             }
 
         });
@@ -35,11 +53,11 @@ export function debugmenu() {
         }
 
         const debugmenubox = add([
-            rect(120, 140),
+            rect(120, 200),
             color(0, 0, 0),
             anchor("top"),
             opacity(0.75),
-            pos(globaldebugboxposx, globaldebugboxposy),
+            pos(globaldebugboxposx - 5, globaldebugboxposy + 5),
             area(),
             z(100),
             "debug",
@@ -87,6 +105,65 @@ export function debugmenu() {
             }),
             color("#ffffff"),
             pos(100, 0),
+            z(102),
+            "debug",
+        ])
+
+        const buttonkillp1 = add([
+            text("KILL PLAYER 1", {
+                font: "pixel",
+                align: "left",
+                size: 8,
+            }),
+            color("#700000"),
+            pos(100, 0),
+            area(),
+            opacity(1),
+            z(102),
+            outline(2, rgb(255, 0, 0)),
+            "debug",
+        ])
+
+        const buttonkillp2 = add([
+            text("KILL PLAYER 2", {
+                font: "pixel",
+                align: "left",
+                size: 8,
+            }),
+            color("#700000"),
+            pos(100, 0),
+            area(),
+            opacity(1),
+            z(102),
+            outline(2, rgb(255, 0, 0)),
+            "debug",
+        ])
+
+        const stopgamebutton = add([
+            text("STOP GAME", {
+                font: "pixel",
+                align: "left",
+                size: 8,
+            }),
+            color("#700000"),
+            pos(100, 0),
+            area(),
+            opacity(1),
+            z(102),
+            outline(2, rgb(255, 0, 0)),
+            "debug",
+        ])
+
+        const resetscenebutton = add([
+            text("reset current Scene", {
+                font: "pixel",
+                align: "left",
+                size: 8,
+            }),
+            color("#ffffff"),
+            pos(100, 0),
+            area(),
+            opacity(1),
             z(102),
             "debug",
         ])
@@ -147,6 +224,17 @@ export function debugmenu() {
             tptostartbutton.pos.y = buttons_y + 25
             tptostarttxt.pos.x = buttons_x + 10
             tptostarttxt.pos.y = buttons_y + 25
+
+            buttonkillp1.pos.x = buttons_x - 5
+            buttonkillp1.pos.y = buttons_y + 50
+            buttonkillp2.pos.x = buttons_x - 5
+            buttonkillp2.pos.y = buttons_y + 75
+
+
+            stopgamebutton.pos.x = buttons_x - 5
+            stopgamebutton.pos.y = buttons_y + 100
+            resetscenebutton.pos.x = buttons_x - 5
+            resetscenebutton.pos.y = buttons_y + 125
         })
         // Mouse Drag
 
@@ -179,9 +267,36 @@ export function debugmenu() {
             console.log("TP to title")
             go("title")
         })
-        tptostartbutton.onClick(() => {
-            console.log("TP to start")
-            go("start")
+
+        tptotitlebutton.onClick(() => {
+            console.log("TP to title")
+            go("title")
+        })
+
+        resetscenebutton.onClick(() => {
+            console.log("scene reset")
+            go(currentscene)
+        })
+
+        stopgamebutton.onClick(() => {
+            console.log("scene reset")
+            paused = !paused
+        })
+        buttonkillp1.clickable = true
+        buttonkillp1.onClick(() => {
+            if (buttonkillp1.clickable == true) {
+                buttonkillp1.clickable = false
+                p1die()
+                buttonkillp1.opacity = (0.5)
+            }
+        })
+        buttonkillp2.clickable = true
+        buttonkillp2.onClick(() => {
+            if (buttonkillp2.clickable == true) {
+                buttonkillp2.clickable = false
+                p2die()
+                buttonkillp2.opacity = (0.5)
+            }
         })
 
 

@@ -1,14 +1,68 @@
+function p1die(obj) {
+    const p1 = get("player1")[0]
+    const p1pin = get("p1pin")[0]
+    p1.destroy()
+    p1pin.destroy()
+    p1.alive = false
+}
+
+
+function p2die(obj) {
+    const p2 = get("player2")[0]
+    const p2pin = get("p2pin")[0]
+    p2.destroy()
+    p2pin.destroy()
+    p2.alive = false
+}
+
+
 import { debugmenu } from "../globalfunctions/debugmode.js"
+
+export { p1die }
+export { p2die }
 scene("start", () => {
     currentscene = "start"
     console.log("Done!")
     debugmenu()
+    let obstaclesspawncount = 0
+
+    //gameover
+    function gameover() {
+        difficulty = 0
+        isgameover = true
+        const gameendtxt = add([
+            text("FIM!", {
+                font: "bigpixel",
+                align: "center",
+                size: 48,
+            }),
+            color("#ffffff"),
+            pos(cw / 4, 0),
+            area(),
+            opacity(1),
+            z(10),
+            outline(2, rgb(255, 0, 0)),
+            fixed(),
+        ])
+        let camScale = 1
+        let camAngle = 0
+        let camPosx = 0
+        let camPosy = 0
+        onUpdate(() => {
+            gameendtxt.pos.y = lerp(gameendtxt.pos.y, ch / 2.5, dt() * 5)
+            camScale = lerp(camScale, 3, dt() * 1)
+            camAngle = lerp(camAngle, 15, dt() * 3)
+            camPosx = lerp(camPosx, x_players_spawnlocation + 15, dt() * 1)
+            camPosy = y_players_spawnlocation + 15
+            setCamScale(camScale);   // zoom in
+            setCamRot(camAngle);       // tilt a little
+            setCamPos(camPosx + 30, camPosy - 50)      // change position
+        });
+    }
 
     // WORLD
-
-
     const floor = add([
-        rect(480, 30),
+        rect(480, 20),
         pos(0, 210),
         area(),
         color(255, 255, 255),
@@ -17,7 +71,14 @@ scene("start", () => {
 
     const chao = add([
         sprite("chaotitle"),
-        pos(cw / 2, 240),
+        pos(cw / 2, 238),
+        anchor("bot"),
+        "chaotitle",
+    ])
+
+    const xtrachao = add([
+        sprite("chaotitle"),
+        pos(cw / 2-300, 238),
         anchor("bot"),
         "chaotitle",
     ])
@@ -84,8 +145,29 @@ scene("start", () => {
 
     // GLOBAL PLAYERS
 
-    const x_players_spawnlocation = 40
-    const y_players_spawnlocation = ch
+    function repeat(delay, times, callback) {
+
+        let count = 0;
+
+        const lp = loop(delay, () => {
+
+            callback();
+
+            count++;
+
+            if (count >= times) {
+                lp.cancel();
+            }
+
+        });
+    }
+
+    const x_players_spawnlocation = 20
+    const y_players_spawnlocation = 210
+
+    const back_placement = x_players_spawnlocation
+    const front_placement = x_players_spawnlocation + 30
+
     let default_gravity = 850
     let default_jump = 350
 
@@ -102,6 +184,9 @@ scene("start", () => {
     ])
 
     p1.alive = true
+    p1.hittable = true
+    p1.placement = "back"
+
     p1.grounded = false
     p1.crouched = false
     p1.gravity = default_gravity
@@ -164,6 +249,9 @@ scene("start", () => {
     ])
 
     p2.alive = true
+    p2.hittable = true
+    p2.placement = "front"
+
     p2.grounded = false
     p2.crouched = false
     p2.gravity = default_gravity + 10
@@ -214,43 +302,94 @@ scene("start", () => {
     })
 
     //Lifes
+    let isgameover = false
+    let lasthit = "player?"
+    onUpdate(() => {
 
-    function p1die(obj) {
-        obj.destroy()
-        p1.destroy()
-        p1pin.destroy()
-    }
 
-    function p2die(obj) {
-        obj.destroy()
-        p2.destroy()
-        p2pin.destroy()
-    }
-
+        if ((!p1.alive || !p2.alive) && !isgameover) {
+            gameover()
+        }
+    });
     function p1damage(obj) {
+        lasthit = "player1"
+        p1.hittable = false
         if (p1.lifes <= 1 && p1.alive) {
             p1die(obj)
             p1.alive = false
+            gameover()
+            console.log("p1 is dead!")
         }
         p1.lifes -= 1
-        p1.opacity = 0.5
-        wait(0.5, () => {
-            p1.opacity = 1
-        })
+        repeat(0.15, 8, () => {
+            p1.opacity = p1.opacity === 0.1 ? 1 : 0.1;
+        });
+        wait(1.2, () => {
+            p1.hittable = true
+        });
+        switchplaces()
     }
 
     function p2damage(obj) {
+        lasthit = "player2"
+        p2.hittable = false
         if (p2.lifes <= 1 && p2.alive) {
             p2die(obj)
             p2.alive = false
+            gameover()
+            console.log("p2 is dead!")
         }
         p2.lifes -= 1
-        p2.opacity = 0.5
-        wait(0.5, () => {
-            p2.opacity = 1
-        })
+        repeat(0.15, 8, () => {
+            p2.opacity = p2.opacity === 0.1 ? 1 : 0.1;
+        });
+        wait(1.2, () => {
+            p2.hittable = true
+        });
+        switchplaces()
     }
 
+    function switchplaces() {
+
+        function switchplaces2() {
+            if (p1.placement == "back") {
+                p1.placement = "front"
+                p2.placement = "back"
+            } else if (p1.placement == "front") {
+                p1.placement = "back"
+                p2.placement = "front"
+            } else {
+                p1.placement = "front"
+                p2.placement = "back"
+            }
+        }
+
+        if (p1.alive || p2.alive) {
+            if ((lasthit == "player1" && p1.placement == "front") || (lasthit == "player2" && p2.placement == "front")) {
+                switchplaces2()
+            }
+        } else if (p1.alive || !p2.alive) {
+            p1.placement = "back"
+        } else if (!p1.alive || p2.alive) {
+            p2.placement = "back"
+        }
+    }
+
+    onUpdate(() => {
+
+        if (p1.placement == "front") {
+            p1.pos.x = lerp(p1.pos.x, front_placement, dt() * 5)
+        }
+        if (p1.placement == "back") {
+            p1.pos.x = lerp(p1.pos.x, back_placement, dt() * 5)
+        }
+        if (p2.placement == "front") {
+            p2.pos.x = lerp(p2.pos.x, front_placement, dt() * 5)
+        }
+        if (p2.placement == "back") {
+            p2.pos.x = lerp(p2.pos.x, back_placement, dt() * 5)
+        }
+    })
 
     p1.lifes = 3
     p2.lifes = 3
@@ -264,67 +403,108 @@ scene("start", () => {
 
 
     let longenemychance = 0;
-    let obstaclewait_min = 100;
-    let obstaclewait_max = 100;
-    let dinospeed = 1000
-    let pterochance = 1
+    let obstaclewait_min = 10;
+    let obstaclewait_max = 10;
+    let dinospeed = 1
+    let pterochance = 0
 
 
-    let difficulty = 0
+    let difficulty = 4
     wait(3, () => {
-        loop(15, () => {
-            if (difficulty < 5) {
+        loop(10, () => {
+            if (difficulty < 10 && !isgameover) {
                 difficulty += 1
             }
         })
     })
     function checkdifficulty() {
         switch (difficulty) {
-
             case 0:
                 longenemychance = 0;
-                obstaclewait_min = 1
-                obstaclewait_max = 1
-                pterochance = 0
-                dinospeed = 0
-                break
+                obstaclewait_min = 5;
+                obstaclewait_max = 5;
+                pterochance = 0;
+                dinospeed = 0;
+                break;
             case 1:
                 longenemychance = 0;
-                obstaclewait_min = 1
-                obstaclewait_max = 5
-                pterochance = 0
-                dinospeed = 200
-                break
+                obstaclewait_min = 1;
+                obstaclewait_max = 5;
+                pterochance = 0;
+                dinospeed = 200;
+                break;
+
             case 2:
                 longenemychance = 0;
-                obstaclewait_min = 1
-                obstaclewait_max = 3
-                pterochance = 0.1
-                dinospeed = 300
-                break
+                obstaclewait_min = 1;
+                obstaclewait_max = 4;
+                pterochance = 0.05;
+                dinospeed = 250;
+                break;
+
             case 3:
                 longenemychance = 0;
-                obstaclewait_min = 0.5
-                obstaclewait_max = 2.5
-                pterochance = 0.15
-                dinospeed = 400
-                break
+                obstaclewait_min = 1;
+                obstaclewait_max = 3;
+                pterochance = 0.1;
+                dinospeed = 300;
+                break;
 
             case 4:
-                longenemychance = 0.025;
-                obstaclewait_min = 0.2
-                obstaclewait_max = 3
-                pterochance = 0.2
-                dinospeed = 600
-                break
+                longenemychance = 0;
+                obstaclewait_min = 0.75;
+                obstaclewait_max = 2.75;
+                pterochance = 0.125;
+                dinospeed = 350;
+                break;
 
             case 5:
+                longenemychance = 0;
+                obstaclewait_min = 0.5;
+                obstaclewait_max = 2.5;
+                pterochance = 0.15;
+                dinospeed = 400;
+                break;
+
+            case 6:
+                longenemychance = 0.0125;
+                obstaclewait_min = 0.35;
+                obstaclewait_max = 2.75;
+                pterochance = 0.175;
+                dinospeed = 500;
+                break;
+
+            case 7:
+                longenemychance = 0.025;
+                obstaclewait_min = 0.2;
+                obstaclewait_max = 3;
+                pterochance = 0.2;
+                dinospeed = 600;
+                break;
+
+            case 8:
+                longenemychance = 0.035;
+                obstaclewait_min = 0.25;
+                obstaclewait_max = 2.5;
+                pterochance = 0.25;
+                dinospeed = 650;
+                break;
+
+            case 9:
                 longenemychance = 0.05;
-                obstaclewait_min = 0.3;
+                obstaclewait_min = 0.25;
+                obstaclewait_max = 2.25;
+                pterochance = 0.3;
+                dinospeed = 775;
+                break;
+
+            case 10:
+                longenemychance = 0.1;
+                obstaclewait_min = 0.2;
                 obstaclewait_max = 2;
-                pterochance = 0.3
-                dinospeed = 700
-                break
+                pterochance = 0.4;
+                dinospeed = 900;
+                break;
 
             case 67:
                 longenemychance = 0;
@@ -408,38 +588,42 @@ scene("start", () => {
     }
 
     SpawnEnemies();
-obstaclesspawncount +=
-    onUpdate(() => {
+    obstaclesspawncount +=
+        onUpdate(() => {
 
-        for (const pte of get("ptero")) {
-            pte.move(dinospeed * -1, 0);
-            if (pte.pos.x < -50) {
-                destroy(pte);
-                ptero.splice(ptero.indexOf(pte), 1);
+            for (const pte of get("ptero")) {
+                pte.move(dinospeed * -1, 0);
+                if (pte.pos.x < -50) {
+                    destroy(pte);
+                    ptero.splice(ptero.indexOf(pte), 1);
+                }
             }
-        }
 
-        for (const cac of get("cactus")) {
+            for (const cac of get("cactus")) {
 
-            cac.move(dinospeed * -1, 0);
-            if (cac.pos.x < -50) {
-                destroy(cac);
-                cactus.splice(cactus.indexOf(cac), 1);
+                cac.move(dinospeed * -1, 0);
+                if (cac.pos.x < -50) {
+                    destroy(cac);
+                    cactus.splice(cactus.indexOf(cac), 1);
+                }
             }
-        }
-    });
+        });
 
 
     onCollide("player1", "obstacle", (player, obstacle) => {
-        console.log("player 1 has hit: " + obstacle.name)
-        p1damage(obstacle)
+        if (p1.hittable) {
+            console.log("player 1 has hit: " + obstacle.name)
+            p1damage(obstacle)
+        }
         obstacle.destroy()
     })
 
 
     onCollide("player2", "obstacle", (player, obstacle) => {
-        console.log("player 2 has hit: " + obstacle.name)
-        p2damage(obstacle)
+        if (p2.hittable) {
+            console.log("player 2 has hit: " + obstacle.name)
+            p2damage(obstacle)
+        }
         obstacle.destroy()
     })
 })
