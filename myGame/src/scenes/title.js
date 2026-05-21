@@ -1,6 +1,6 @@
 import { debugmenu } from "../globalfunctions/debugmode.js"
 scene("title", () => {
-    globalThis.currentscene = "title"
+    currentscene = "title"
     //  // CONFIG
     //DEBUG
     debugmenu()
@@ -138,7 +138,7 @@ scene("title", () => {
             tween(64, 48, 0.4, (val) => { countdowntext.textSize = val }, easings.easeOutBack)
             countdownnum = 2
             console.log(countdownnum)
-            countdowntext.text = String(countdownnum)
+            countdowntext.text = "[wave]"+String(countdownnum)+"[/wave]"
 
             wait(1, () => {
                 if ((!countdown || myId !== countdownId || !p1.ready || !p2.ready) && !countdownend) return

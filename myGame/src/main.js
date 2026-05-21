@@ -10,4 +10,4 @@ kaplay({
 
 await import("./import.js")
 
-go("title")
+go(sceneatlaunch)

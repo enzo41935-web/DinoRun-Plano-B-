@@ -1,23 +1,33 @@
 export function debugmenu() {
     if (debugmode) {
+        let paused = false;
+
+        onKeyPress("l", () => {
+            paused = !paused;
+        });
+
+        onUpdate(() => {
+            if (paused) {
+                destroyAll();
+                debug.paused = true
+                destroyAll();
+            }
+
+        });
 
         function updatedebugvisibility() {
+
             get("debug").forEach((obj) => {
                 if (debugboxshow) {
                     // Show & Hide
                     obj.hidden = false
+                    console.log("debug menu open")
                 } else {
                     obj.hidden = true
+                    console.log("debug menu closed")
                 }
             }) //obj naming
-        }
 
-        if (debugboxshowonstart) {
-            debugboxshow = true
-            updatedebugvisibility()
-        } else {
-            debugboxshow = false
-            updatedebugvisibility()
         }
 
         const debugmenubox = add([
@@ -42,7 +52,7 @@ export function debugmenu() {
         ])
 
         const debugmenuheadertxt = add([
-            text("debugmenu", {
+            text(`Debug Menu - \\[P\\] TO HIDE`, {
                 font: "pixel",
                 align: "right",
                 size: 8,
@@ -102,15 +112,12 @@ export function debugmenu() {
         ])
         onKeyPress("p", () => {
             debugboxshow = !debugboxshow
-            updatedebugvisibility()
-            if (!debugboxshow) {
-                console.log("debug menu open")
-            } else {
-                console.log("debug menu closed")
+            if (debugboxshow == debugmenubox.hidden) {
+                updatedebugvisibility()
             }
         })
 
-
+        updatedebugvisibility()
         let dragging = false
         let buttons_x = debugmenubox.pos.x - 50
         let buttons_y = debugmenubox.pos.y + 20
@@ -124,7 +131,8 @@ export function debugmenu() {
             buttons_y = debugmenubox.pos.y + 20
 
             debugmenuheader.pos = debugmenubox.pos
-            debugmenuheadertxt.pos = debugmenuheader.pos
+            debugmenuheadertxt.pos.x = debugmenuheader.pos.x - 47
+            debugmenuheadertxt.pos.y = debugmenuheader.pos.y + 2
 
             tptotitlebutton.pos.x = buttons_x
             tptotitlebutton.pos.y = buttons_y
@@ -137,7 +145,15 @@ export function debugmenu() {
             tptostarttxt.pos.y = buttons_y + 25
         })
         // Mouse Drag
-        debugmenuheader.onClick(() => {
+
+        let dragOffsetX = 0
+        let dragOffsetY = 0
+
+        debugmenubox.onClick(() => {
+
+            dragOffsetX = mousePos().x - debugmenubox.pos.x
+            dragOffsetY = mousePos().y - debugmenubox.pos.y
+
             dragging = true
         })
 
@@ -145,13 +161,14 @@ export function debugmenu() {
             dragging = false
         })
 
-
         onUpdate(() => {
             if (dragging) {
-                debugmenubox.pos = mousePos()
+
+                debugmenubox.pos.x = mousePos().x - dragOffsetX
+                debugmenubox.pos.y = mousePos().y - dragOffsetY
+
             }
         })
-
         //Teleport Button
 
         tptotitlebutton.onClick(() => {

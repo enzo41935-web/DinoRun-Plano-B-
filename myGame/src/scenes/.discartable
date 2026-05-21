@@ -1,0 +1,31 @@
+const ptero = [];
+    function spawnPtero() {
+        const pte = add([
+            pos(cw + 20, 170),
+            rect(20, 40),
+            area(),
+            opacity(0.3),
+            "ptero",
+        ]);
+
+        pte.name = `ptero-${ptero.length + 1}`;
+
+        ptero.push(pte);
+
+        console.log("ptero criados:", ptero.length);
+
+        if (chance(longcactichance)) {
+            wait(rand(2, 5), spawnPtero)
+            console.log("long cacti wait");
+            spawnPtero
+        } else {
+            wait(rand(cacwait_min, cacwait_max), spawnPtero)
+        }
+    }
+
+    spawnPtero();
+
+    onUpdate(() => {
+        for (const ptero of get("ptero"))
+            ptero.move(cactispeed * -1, 0)
+    })
