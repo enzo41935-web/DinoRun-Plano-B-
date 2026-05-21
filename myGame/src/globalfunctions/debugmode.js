@@ -6,6 +6,10 @@ export function debugmenu() {
             paused = !paused;
         });
 
+        onKeyPress("o", () => {
+            go(currentscene)
+        });
+
         onUpdate(() => {
             if (paused) {
                 destroyAll();

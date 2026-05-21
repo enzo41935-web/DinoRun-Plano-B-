@@ -23,11 +23,47 @@ scene("start", () => {
     ])
 
     // HUD
+
+    const p1lifesHUD = add([
+        text("3", {
+            font: "pixel",
+            size: 16,
+            align: "center"
+        }),
+        color("#00ff00"),
+        pos(10, 10),
+    ])
+
+    const p2lifesHUD = add([
+        text("3", {
+            font: "pixel",
+            size: 16,
+            align: "center"
+        }),
+        color("#0000ff"),
+        pos(30, 10),
+    ])
+
+    const difficultytxt = add([
+        text("0", {
+            font: "pixel",
+            size: 16,
+            align: "center"
+        }),
+        color("#ff0000"),
+        pos(cw - 40, 10),
+    ])
+
+    onUpdate(() => {
+        difficultytxt.text = difficulty
+    })
+
     const p1pin = add([
         sprite("p1pin"),
         pos(cw / 2, ch / 2),
         anchor("bot"),
-        "p1pin"
+        "p1pin",
+
     ])
 
     const p2pin = add([
@@ -65,6 +101,7 @@ scene("start", () => {
         "player"
     ])
 
+    p1.alive = true
     p1.grounded = false
     p1.crouched = false
     p1.gravity = default_gravity
@@ -126,6 +163,7 @@ scene("start", () => {
         "player"
     ])
 
+    p2.alive = true
     p2.grounded = false
     p2.crouched = false
     p2.gravity = default_gravity + 10
@@ -174,6 +212,54 @@ scene("start", () => {
         }
 
     })
+
+    //Lifes
+
+    function p1die(obj) {
+        obj.destroy()
+        p1.destroy()
+        p1pin.destroy()
+    }
+
+    function p2die(obj) {
+        obj.destroy()
+        p2.destroy()
+        p2pin.destroy()
+    }
+
+    function p1damage(obj) {
+        if (p1.lifes <= 1 && p1.alive) {
+            p1die(obj)
+            p1.alive = false
+        }
+        p1.lifes -= 1
+        p1.opacity = 0.5
+        wait(0.5, () => {
+            p1.opacity = 1
+        })
+    }
+
+    function p2damage(obj) {
+        if (p2.lifes <= 1 && p2.alive) {
+            p2die(obj)
+            p2.alive = false
+        }
+        p2.lifes -= 1
+        p2.opacity = 0.5
+        wait(0.5, () => {
+            p2.opacity = 1
+        })
+    }
+
+
+    p1.lifes = 3
+    p2.lifes = 3
+
+    onUpdate(() => {
+        p1lifesHUD.text = p1.lifes
+        p2lifesHUD.text = p2.lifes
+    })
+
     //CACTUS
 
 
@@ -183,15 +269,22 @@ scene("start", () => {
     let dinospeed = 1000
     let pterochance = 1
 
-    let difficulty = 6
 
+    let difficulty = 0
+    wait(3, () => {
+        loop(15, () => {
+            if (difficulty < 5) {
+                difficulty += 1
+            }
+        })
+    })
     function checkdifficulty() {
         switch (difficulty) {
 
             case 0:
                 longenemychance = 0;
-                obstaclewait_min = 1000
-                obstaclewait_max = 1000
+                obstaclewait_min = 1
+                obstaclewait_max = 1
                 pterochance = 0
                 dinospeed = 0
                 break
@@ -218,19 +311,19 @@ scene("start", () => {
                 break
 
             case 4:
-                longenemychance = 0.05;
+                longenemychance = 0.025;
                 obstaclewait_min = 0.2
-                obstaclewait_max = 2
-                pterochance = 0.3
+                obstaclewait_max = 3
+                pterochance = 0.2
                 dinospeed = 600
                 break
 
             case 5:
-                longenemychance = 0.1;
+                longenemychance = 0.05;
                 obstaclewait_min = 0.3;
                 obstaclewait_max = 2;
-                pterochance = 0.5
-                dinospeed = 900
+                pterochance = 0.3
+                dinospeed = 700
                 break
 
             case 67:
@@ -251,7 +344,7 @@ scene("start", () => {
     //Hardest wait 0.4 to 2, dinospeed -800
 
     checkdifficulty()
-    loop(0.1, () => {
+    loop(0.5, () => {
         checkdifficulty()
     })
 
@@ -271,31 +364,33 @@ scene("start", () => {
                 area(),
                 opacity(1),
                 "cactus",
+                "obstacle"
             ]);
 
             cac.name = `cactus-${cactus.length + 1}`;
 
             cactus.push(cac);
 
-            console.log("Cactus criado.");
-            console.log("Inimigos na tela: "+ cactus.length + ptero.length)
+            //console.log("Cactus criado.");
+            //console.log("Inimigos na tela: " + cactus.length + ptero.length)
         } else {
 
             const pte = add([
-                pos(cw + 20, 100),
+                pos(cw + 20, 130),
                 rect(20, 20),
                 color(255, 0, 0),
                 area(),
                 opacity(1),
                 "ptero",
+                "obstacle"
             ]);
 
             pte.name = `ptero-${ptero.length + 1}`;
 
             ptero.push(pte);
 
-            console.log("Ptero criado.");
-            console.log("Inimigos na tela: "+ cactus.length + ptero.length);
+            //console.log("Ptero criado.");
+            //console.log("Inimigos na tela: " + cactus.length + ptero.length);
 
         }
 
@@ -313,11 +408,11 @@ scene("start", () => {
     }
 
     SpawnEnemies();
-
+obstaclesspawncount +=
     onUpdate(() => {
 
         for (const pte of get("ptero")) {
-            pte.move(dinospeed * -1,0);
+            pte.move(dinospeed * -1, 0);
             if (pte.pos.x < -50) {
                 destroy(pte);
                 ptero.splice(ptero.indexOf(pte), 1);
@@ -335,4 +430,16 @@ scene("start", () => {
     });
 
 
+    onCollide("player1", "obstacle", (player, obstacle) => {
+        console.log("player 1 has hit: " + obstacle.name)
+        p1damage(obstacle)
+        obstacle.destroy()
+    })
+
+
+    onCollide("player2", "obstacle", (player, obstacle) => {
+        console.log("player 2 has hit: " + obstacle.name)
+        p2damage(obstacle)
+        obstacle.destroy()
+    })
 })

@@ -8,7 +8,9 @@ globalThis.scenelist = [
     "start", //1
 ]
 
-globalThis.sceneatlaunch = scenelist[1]
+globalThis.sceneatlaunch = scenelist[
+    0
+]
 globalThis.currentscene = ""
 
 //DEBUG MODE
