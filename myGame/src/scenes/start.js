@@ -78,14 +78,14 @@ scene("start", () => {
 
     const xtrachao = add([
         sprite("chaotitle"),
-        pos(cw / 2-300, 238),
+        pos(cw / 2 - 300, 238),
         anchor("bot"),
         "chaotitle",
     ])
 
     // HUD
 
-    const p1lifesHUD = add([
+    const p1lifesHUD= add([
         text("3", {
             font: "pixel",
             size: 16,
@@ -101,7 +101,7 @@ scene("start", () => {
             size: 16,
             align: "center"
         }),
-        color("#0000ff"),
+        color("#7878ff"),
         pos(30, 10),
     ])
 
@@ -120,19 +120,35 @@ scene("start", () => {
     })
 
     const p1pin = add([
-        sprite("p1pin"),
-        pos(cw / 2, ch / 2),
+        text("ANA", {
+            font: "pixel",
+            size: 8,
+            align: "center"
+        }),
         anchor("bot"),
-        "p1pin",
-
+        color("#9aff3b"),
+        pos(cw - 40, 10),
+        "p1pin"
     ])
 
     const p2pin = add([
-        sprite("p2pin"),
-        pos(0, 0),
+        text("ENZ", {
+            font: "pixel",
+            size: 8,
+            align: "center"
+        }),
         anchor("bot"),
-        "p2pin",
+        color("#4973ff"),
+        pos(cw - 40, 10),
+        "p2pin"
     ])
+
+    // const p2pin = add([
+    //     sprite("p2pin"),
+    //     pos(0, 0),
+    //     anchor("bot"),
+    //     "p2pin",
+    // ])
 
     onUpdate(() => {
         p1pin.pos.x = p1.pos.x
@@ -204,6 +220,7 @@ scene("start", () => {
             p1.grounded = false
         }
     })
+
 
     onKeyDown("s", () => {
         p1.crouched = true
@@ -409,7 +426,7 @@ scene("start", () => {
     let pterochance = 0
 
 
-    let difficulty = 4
+    let difficulty = 0
     wait(3, () => {
         loop(10, () => {
             if (difficulty < 10 && !isgameover) {
@@ -540,7 +557,7 @@ scene("start", () => {
 
             const cac = add([
                 pos(cw + 20, 170),
-                rect(20, 40),
+                rect(10, 40),
                 area(),
                 opacity(1),
                 "cactus",

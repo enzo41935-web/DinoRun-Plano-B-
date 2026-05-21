@@ -7,12 +7,13 @@ globalThis.p1name = "Player 1"
 globalThis.p2name = "Player 2"
 
 globalThis.scenelist = [
-    "title", //0
-    "start", //1
+    "menu", //0
+    "title", //1
+    "start", //2
 ]
 
 globalThis.sceneatlaunch = scenelist[
-    1
+    0
 ]
 globalThis.currentscene = ""
 

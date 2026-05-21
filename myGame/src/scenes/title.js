@@ -4,7 +4,7 @@ scene("title", () => {
     //  // CONFIG
     //DEBUG
     debugmenu()
-    
+
 
     const floor = add([
         rect(480, 30),
@@ -44,19 +44,44 @@ scene("title", () => {
 
 
     // HUD
+    // const p1pin = add([
+    //     sprite("p1pin"),
+    //     pos(cw / 2, ch / 2),
+    //     anchor("bot"),
+    //     "p1pin",
+
+    // ])
+
     const p1pin = add([
-        sprite("p1pin"),
-        pos(cw / 2, ch / 2),
+        text("ANA", {
+            font: "pixel",
+            size: 8,
+            align: "center"
+        }),
         anchor("bot"),
+        color("#9aff3b"),
+        pos(cw - 40, 10),
         "p1pin"
     ])
 
     const p2pin = add([
-        sprite("p2pin"),
-        pos(0, 0),
+        text("ENZ", {
+            font: "pixel",
+            size: 8,
+            align: "center"
+        }),
         anchor("bot"),
-        "p2pin",
+        color("#4973ff"),
+        pos(cw - 40, 10),
+        "p2pin"
     ])
+
+    // const p2pin = add([
+    //     sprite("p2pin"),
+    //     pos(0, 0),
+    //     anchor("bot"),
+    //     "p2pin",
+    // ])
 
     onUpdate(() => {
         p1pin.pos.x = p1.pos.x
@@ -110,6 +135,19 @@ scene("title", () => {
         z(5),
     ])
 
+
+    //teste mover
+    // onKeyDown("right", () => {
+    //     p2.move(70, 0)
+    // })
+
+    // onKeyDown("left", () => {
+    //     p2.move(-70, 0)
+    // })
+
+
+
+
     var countdown = false
     let countdownend = false
     let countdownnum = 3
@@ -138,7 +176,7 @@ scene("title", () => {
             tween(64, 48, 0.4, (val) => { countdowntext.textSize = val }, easings.easeOutBack)
             countdownnum = 2
             console.log(countdownnum)
-            countdowntext.text = "[wave]"+String(countdownnum)+"[/wave]"
+            countdowntext.text = "[wave]" + String(countdownnum) + "[/wave]"
 
             wait(1, () => {
                 if ((!countdown || myId !== countdownId || !p1.ready || !p2.ready) && !countdownend) return
@@ -180,7 +218,7 @@ scene("title", () => {
 
     // GLOBAL PLAYERS
 
-    
+
 
     const x_players_spawnlocation = 65
     const y_players_spawnlocation = ch

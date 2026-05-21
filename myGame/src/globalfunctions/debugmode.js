@@ -268,9 +268,9 @@ export function debugmenu() {
             go("title")
         })
 
-        tptotitlebutton.onClick(() => {
-            console.log("TP to title")
-            go("title")
+        tptostartbutton.onClick(() => {
+            console.log("TP to start")
+            go("start")
         })
 
         resetscenebutton.onClick(() => {
