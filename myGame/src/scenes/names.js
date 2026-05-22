@@ -18,7 +18,7 @@ scene("names", () => {
     debugmenu()
     currentscene = "names"
 
-    let bothplayersready = false
+    let readyft = false
 
     const logo = add([
         sprite("logo"),
@@ -144,11 +144,11 @@ scene("names", () => {
     ])
 
     const p1picker = add([
-        rect(18, 18),
+        sprite("p1picker"),
         pos(cw / 2 - 250, 230),
         anchor("center"),
         opacity(1),
-        scale(1),
+        scale(1,0.5),
     ])
 
     function refreshPickerPos() {
@@ -220,7 +220,7 @@ scene("names", () => {
 
     onKeyPress("s", () => {
 
-        if (p1pickerready && !bothplayersready) {
+        if (p1pickerready && !readyft) {
             p1pickerready = false
         }
 
@@ -317,11 +317,11 @@ scene("names", () => {
     ])
 
     const p2picker = add([
-        rect(18, 18),
+        sprite("p2picker"),
         pos(p2pickerx, 230),
         anchor("center"),
         opacity(1),
-        scale(1),
+        scale(1,0.5)
     ])
 
     function refreshP2PickerPos() {
@@ -403,7 +403,7 @@ scene("names", () => {
 
     onKeyPress("down", () => {
 
-        if (p2pickerready && !bothplayersready) {
+        if (p2pickerready && !readyft) {
             p2pickerready = false
         }
 
@@ -439,7 +439,7 @@ scene("names", () => {
     onUpdate(() => {
 
         if (p1pickerready && p2pickerready) {
-            bothplayersready = true
+            readyft = true
         }
 
     })
@@ -498,10 +498,65 @@ scene("names", () => {
         }
     }
 
-    floatAnim()
 
+
+    floatAnim()
+    async function floatAnim2() {
+
+        while (true) {
+
+            await Promise.all([
+
+                tween(
+                    p1picker.pos.y,
+                    224,
+                    0.5,
+                    (val) => {
+                        p1picker.pos.y = val
+                    },
+                    easings.easeInOutSine
+                ),
+
+                tween(
+                    p2picker.pos.y,
+                    220,
+                    0.5,
+                    (val) => {
+                        p2picker.pos.y = val
+                    },
+                    easings.easeInOutSine
+                )
+
+            ])
+
+            await Promise.all([
+
+                tween(
+                    p1picker.pos.y,
+                    220,
+                    0.5,
+                    (val) => {
+                        p1picker.pos.y = val
+                    },
+                    easings.easeInOutSine
+                ),
+
+                tween(
+                    p2picker.pos.y,
+                    224,
+                    0.5,
+                    (val) => {
+                        p2picker.pos.y = val
+                    },
+                    easings.easeInOutSine
+                )
+
+            ])
+        }
+    }
+    floatAnim2()
     onUpdate(() => {
-        if (bothplayersready) {
+        if (readyft) {
             wait(1, () => {
                 fade.opacity = lerp(fade.opacity, 1, dt() * 4)
                 wait(3, () => {

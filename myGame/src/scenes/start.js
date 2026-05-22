@@ -16,6 +16,7 @@ function p2die(obj) {
 }
 
 
+
 import { debugmenu } from "../globalfunctions/debugmode.js"
 
 export { p1die }
@@ -30,6 +31,13 @@ scene("start", () => {
     function gameover() {
         difficulty = 0
         isgameover = true
+        if (p1.alive || !p2.alive) {
+            winnerplayername = p1name
+        } else if (!p1.alive || p2.alive) {
+            winnerplayername = p2name
+        } else{
+            winnerplayername = "???"
+        }
         const gameendtxt = add([
             text("FIM!", {
                 font: "bigpixel",
@@ -40,7 +48,7 @@ scene("start", () => {
             pos(cw / 4, 0),
             area(),
             opacity(1),
-            z(10),
+            z(9),
             outline(2, rgb(255, 0, 0)),
             fixed(),
         ])
@@ -48,17 +56,40 @@ scene("start", () => {
         let camAngle = 0
         let camPosx = 0
         let camPosy = 0
+
+        wait(2, () => {
+            onUpdate(() => {
+                if (fadein == false) {
+                    fade2.opacity = lerp(fade2.opacity, 1, dt() * 6)
+                }
+                wait(3, () => {
+                    go("podium")
+                })
+            })
+        })
+
         onUpdate(() => {
             gameendtxt.pos.y = lerp(gameendtxt.pos.y, ch / 2.5, dt() * 5)
             camScale = lerp(camScale, 3, dt() * 1)
-            camAngle = lerp(camAngle, 15, dt() * 3)
+            camAngle = lerp(camAngle, 15, dt() * 1)
             camPosx = lerp(camPosx, x_players_spawnlocation + 15, dt() * 1)
             camPosy = y_players_spawnlocation + 15
             setCamScale(camScale);   // zoom in
             setCamRot(camAngle);       // tilt a little
-            setCamPos(camPosx + 30, camPosy - 50)      // change position
+            setCamPos(camPosx + 20, camPosy - 50)      // change position
         });
     }
+
+    let IntrocamPosx = cw / 2
+    let IntrocamPosy = ch / 2 - 200
+    setCamPos(IntrocamPosx, IntrocamPosy)
+
+    onUpdate(() => {
+        if (fadein) {
+            setCamPos(cw / 2, IntrocamPosy)
+            IntrocamPosy = lerp(IntrocamPosy, (ch / 2) + 20, dt() * 2)
+        }
+    })
 
     // WORLD
     const floor = add([
@@ -67,6 +98,7 @@ scene("start", () => {
         area(),
         color(255, 255, 255),
         "floor",
+        z(2)
     ])
 
     const chao = add([
@@ -74,6 +106,7 @@ scene("start", () => {
         pos(cw / 2, 238),
         anchor("bot"),
         "chaotitle",
+        z(3)
     ])
 
     const xtrachao = add([
@@ -81,6 +114,7 @@ scene("start", () => {
         pos(cw / 2 - 300, 238),
         anchor("bot"),
         "chaotitle",
+        z(2)
     ])
 
     // FX
@@ -92,6 +126,19 @@ scene("start", () => {
         z(50),
         "fade",
         opacity(1),
+        scale(3),
+        fixed()
+    ])
+
+    const fade2 = add([
+        sprite("fade"),
+        pos(0, 0),
+        anchor("topleft"),
+        z(50),
+        "fade",
+        opacity(0),
+        scale(3),
+        fixed()
     ])
 
 
@@ -106,6 +153,8 @@ scene("start", () => {
         }),
         color("#00ff00"),
         pos(10, 10),
+        fixed(),
+        z(10)
     ])
 
     const p2lifesHUD = add([
@@ -116,6 +165,8 @@ scene("start", () => {
         }),
         color("#7878ff"),
         pos(30, 10),
+        fixed(),
+        z(10)
     ])
 
     const difficultytxt = add([
@@ -126,6 +177,8 @@ scene("start", () => {
         }),
         color("#ff0000"),
         pos(cw - 40, 10),
+        fixed(),
+        z(10)
     ])
 
     onUpdate(() => {
@@ -141,7 +194,8 @@ scene("start", () => {
         anchor("bot"),
         color("#9aff3b"),
         pos(cw - 40, 10),
-        "p1pin"
+        "p1pin",
+        z(3)
     ])
 
     const p2pin = add([
@@ -153,7 +207,8 @@ scene("start", () => {
         anchor("bot"),
         color("#4973ff"),
         pos(cw - 40, 10),
-        "p2pin"
+        "p2pin",
+        z(3)
     ])
 
     // const p2pin = add([
@@ -209,7 +264,8 @@ scene("start", () => {
         anchor("bot"),
         area(),
         "player1",
-        "player"
+        "player",
+        z(2)
     ])
 
     p1.alive = true
@@ -275,7 +331,8 @@ scene("start", () => {
         anchor("bot"),
         area(),
         "player2",
-        "player"
+        "player",
+        z(2)
     ])
 
     p2.alive = true
@@ -439,13 +496,16 @@ scene("start", () => {
     let pterochance = 0
 
 
-    
+
     let difficulty = 0
-    
-    wait(0.1,() => {
+
+    let fadein = true
+    wait(0.1, () => {
         onUpdate(() => {
-            
             fade.opacity = lerp(fade.opacity, 0, dt() * 1)
+            wait(1, () => {
+                fadein = false
+            })
         });
     });
 

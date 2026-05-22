@@ -44,6 +44,7 @@ export function debugmenu() {
                     // Show & Hide
                     obj.hidden = false
                     console.log("debug menu open")
+                    obj.fixed = true
                 } else {
                     obj.hidden = true
                     console.log("debug menu closed")

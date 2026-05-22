@@ -1,0 +1,53 @@
+    async function floatAnim2() {
+
+        while (true) {
+
+            await Promise.all([
+
+                tween(
+                    p1picker.pos.y,
+                    224,
+                    1.2,
+                    (val) => {
+                        p1picker.pos.y = val
+                    },
+                    easings.easeInOutSine
+                ),
+
+                tween(
+                    p2picker.pos.y,
+                    220,
+                    1.2,
+                    (val) => {
+                        p2picker.pos.y = val
+                    },
+                    easings.easeInOutSine
+                )
+
+            ])
+
+            await Promise.all([
+
+                tween(
+                    p1picker.pos.y,
+                    220,
+                    1.2,
+                    (val) => {
+                        p1picker.pos.y = val
+                    },
+                    easings.easeInOutSine
+                ),
+
+                tween(
+                    p2picker.pos.y,
+                    224,
+                    1.2,
+                    (val) => {
+                        p2picker.pos.y = val
+                    },
+                    easings.easeInOutSine
+                )
+
+            ])
+        }
+    }
