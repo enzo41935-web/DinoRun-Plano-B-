@@ -52,18 +52,16 @@ scene("names", () => {
     //P1PICKER
 
     const p1readybutton = add([
-        rect(18, 18),
+        sprite("check"),
         pos(cw / 2 - 110, 198),
         anchor("center"),
-        color(rgb(0, 0, 0)),
         "p1readybutton",
     ])
 
     const p2readybutton = add([
-        rect(18, 18),
+        sprite("check"),
         pos(cw - 30, 198),
         anchor("center"),
-        color(rgb(0, 255, 0)),
         "p1readybutton",
     ])
 
@@ -72,10 +70,10 @@ scene("names", () => {
     // =========================
 
     const letters = [
-        "bruh", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+        "", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
         "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
         "U", "V", "W", "X", "Y", "Z",
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_"
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_", "",
     ]
 
     function getLetter(index) {
@@ -148,7 +146,7 @@ scene("names", () => {
         pos(cw / 2 - 250, 230),
         anchor("center"),
         opacity(1),
-        scale(1,0.5),
+        scale(1, 0.5),
     ])
 
     function refreshPickerPos() {
@@ -231,7 +229,7 @@ scene("names", () => {
         if (p1pickerready) {
 
             p1picker.hidden = true
-            p1readybutton.color = rgb(0, 255, 0)
+            p1readybutton.play("on")
 
             P1CHAR1txt.color = rgb(0, 255, 0)
             P1CHAR2txt.color = rgb(0, 255, 0)
@@ -240,7 +238,7 @@ scene("names", () => {
         } else {
 
             p1picker.hidden = false
-            p1readybutton.color = rgb(0, 0, 0)
+            p1readybutton.play("off")
 
             P1CHAR1txt.color = rgb(255, 255, 255)
             P1CHAR2txt.color = rgb(255, 255, 255)
@@ -321,7 +319,7 @@ scene("names", () => {
         pos(p2pickerx, 230),
         anchor("center"),
         opacity(1),
-        scale(1,0.5)
+        scale(1, 0.5)
     ])
 
     function refreshP2PickerPos() {
@@ -414,7 +412,7 @@ scene("names", () => {
         if (p2pickerready) {
 
             p2picker.hidden = true
-            p2readybutton.color = rgb(0, 255, 0)
+            p2readybutton.play("on")
 
             P2CHAR1txt.color = rgb(0, 255, 0)
             P2CHAR2txt.color = rgb(0, 255, 0)
@@ -423,7 +421,7 @@ scene("names", () => {
         } else {
 
             p2picker.hidden = false
-            p2readybutton.color = rgb(0, 0, 0)
+            p2readybutton.play("off")
 
             P2CHAR1txt.color = rgb(255, 255, 255)
             P2CHAR2txt.color = rgb(255, 255, 255)
@@ -568,5 +566,90 @@ scene("names", () => {
             });
         }
     })
+
+    //BACKGROUND
+    const selecttxt = add([
+        text("INSIRA\nSEUS NOMES!", {
+            font: "bigpixel",
+            align: "center",
+            size: 24,
+        }),
+        color("#ffffff"),
+        pos(cw / 2 - 70, ch / 2 - 10),
+        area(),
+        opacity(1),
+        z(15),
+        fixed(),
+    ])
+
+    const bg1 = add([
+        sprite("bg1"),
+        pos(cw / 2, ch / 2),
+        anchor("center"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-2)
+    ])
+
+    const bg1_2 = add([
+        sprite("bg1"),
+        pos(cw / 2 + cw, ch / 2),
+        anchor("center"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-2)
+    ])
+
+    const bg2 = add([
+        sprite("bg2"),
+        pos(cw / 2, ch / 2 - 80),
+        anchor("center"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-1)
+    ])
+
+    const chao = add([
+        sprite("chaotitle"),
+        pos(0, ch - 10),
+        anchor("left"),
+        opacity(1),
+        scale(1, 1),
+        z(-1)
+    ])
+
+    const chao2 = add([
+        sprite("chaotitle"),
+        pos(cw, ch - 10),
+        anchor("left"),
+        opacity(1),
+        scale(1, 1),
+        z(-1)
+    ])
+
+    onUpdate(() => {
+        chao.move(-50, 0)
+        chao2.move(-50, 0)
+        if (chao.pos.x <= (cw * -1)) {
+            chao.pos.x = cw
+        }
+        if (chao2.pos.x <= (cw * -1)) {
+            chao2.pos.x = cw
+        }
+    })
+    onUpdate(() => {
+        bg1.move(-2, 0)
+        bg1_2.move(-2, 0)
+        bg2.move(-1, 0)
+        if (bg1.pos.x <= (cw * -1)) {
+            bg1.pos.x = cw
+        }
+        if (bg1_2.pos.x <= (cw * -1)) {
+            bg1_2.pos.x = cw
+        }
+    })
+
+
+
 
 })

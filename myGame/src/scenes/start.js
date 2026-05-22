@@ -1,7 +1,9 @@
 function p1die(obj) {
     const p1 = get("player1")[0]
+    const p1anim = get("p1anim")[0]
     const p1pin = get("p1pin")[0]
     p1.destroy()
+    p1anim.destroy()
     p1pin.destroy()
     p1.alive = false
 }
@@ -9,9 +11,11 @@ function p1die(obj) {
 
 function p2die(obj) {
     const p2 = get("player2")[0]
+    const p2anim = get("p2anim")[0]
     const p2pin = get("p2pin")[0]
     p2.destroy()
     p2pin.destroy()
+    p2anim.destroy()
     p2.alive = false
 }
 
@@ -35,7 +39,7 @@ scene("start", () => {
             winnerplayername = p1name
         } else if (!p1.alive || p2.alive) {
             winnerplayername = p2name
-        } else{
+        } else {
             winnerplayername = "???"
         }
         const gameendtxt = add([
@@ -98,23 +102,26 @@ scene("start", () => {
         area(),
         color(255, 255, 255),
         "floor",
-        z(2)
+        z(2),
+        opacity(0.1),
     ])
 
     const chao = add([
         sprite("chaotitle"),
-        pos(cw / 2, 238),
-        anchor("bot"),
+        pos(0, ch),
+        anchor("botleft"),
         "chaotitle",
-        z(3)
+        z(3),
     ])
 
-    const xtrachao = add([
+
+    const chao2 = add([
         sprite("chaotitle"),
-        pos(cw / 2 - 300, 238),
-        anchor("bot"),
+        pos(cw, ch),
+        anchor("botleft"),
         "chaotitle",
-        z(2)
+        scale(1.1,1),
+        z(3)
     ])
 
     // FX
@@ -409,7 +416,7 @@ scene("start", () => {
         }
         p1.lifes -= 1
         repeat(0.15, 8, () => {
-            p1.opacity = p1.opacity === 0.1 ? 1 : 0.1;
+            p1anim.opacity = p1anim.opacity === 0.1 ? 1 : 0.1;
         });
         wait(1.2, () => {
             p1.hittable = true
@@ -428,7 +435,7 @@ scene("start", () => {
         }
         p2.lifes -= 1
         repeat(0.15, 8, () => {
-            p2.opacity = p2.opacity === 0.1 ? 1 : 0.1;
+            p2anim.opacity = p2anim.opacity === 0.1 ? 1 : 0.1;
         });
         wait(1.2, () => {
             p2.hittable = true
@@ -728,4 +735,181 @@ scene("start", () => {
         }
         obstacle.destroy()
     })
+
+    //Players Animations
+
+    //P1
+
+    const p1anim = add([
+        sprite("p1"),
+        pos(30, 150),
+        anchor("bot"),
+        area(),
+        "p1anim",
+        z(4),
+    ])
+
+    p1.runanim = "running"
+    p1.idleanim = "idle"
+
+    onUpdate(() => {
+        if (p1.crouched) {
+            p1.runanim = "crouchedrun";
+            p1.idleanim = "crouchedidle";
+        } else {
+            p1.runanim = "running";
+            p1.idleanim = "idle";
+        }
+    })
+
+    onUpdate(() => {
+
+        if (!p1.grounded) {
+
+            if (p1anim.curAnim() !== "jump") {
+                p1anim.play("jump")
+                p1anim.animSpeed = 0.5
+            }
+
+        } else if (difficulty != 0) {
+
+            if (p1anim.curAnim() !== p1.runanim) {
+                p1anim.play(p1.runanim)
+            }
+
+        } else {
+
+            if (p1anim.curAnim() !== p1.idleanim) {
+                p1anim.play(p1.idleanim)
+            }
+
+        }
+
+    })
+
+    onUpdate(() => {
+        p1anim.pos = p1.pos
+        if (p1.grounded) {
+            p1anim.animSpeed = 1 + (difficulty * 0.1)
+        }
+    })
+
+    const p2anim = add([
+        sprite("p2"),
+        pos(30, 150),
+        anchor("bot"),
+        area(),
+        "p2anim",
+        z(4),
+    ])
+
+    p2.runanim = "running"
+    p2.idleanim = "idle"
+
+    onUpdate(() => {
+        if (p2.crouched) {
+            p2.runanim = "crouchedrun";
+            p2.idleanim = "crouchedidle";
+        } else {
+            p2.runanim = "running";
+            p2.idleanim = "idle";
+        }
+    })
+
+    onUpdate(() => {
+
+        if (!p2.grounded) {
+
+            if (p2anim.curAnim() !== "jump") {
+                p2anim.play("jump")
+                p2anim.animSpeed = 0.5
+            }
+
+        } else if (difficulty != 0) {
+
+            if (p2anim.curAnim() !== p2.runanim) {
+                p2anim.play(p2.runanim)
+            }
+
+        } else {
+
+            if (p2anim.curAnim() !== p2.idleanim) {
+                p2anim.play(p2.idleanim)
+            }
+
+        }
+
+    })
+    onUpdate(() => {
+        p2anim.pos = p2.pos
+        if (p2.grounded) {
+            p2anim.animSpeed = 1 + (difficulty * 0.1)
+        }
+    })
+
+    onUpdate(() => {
+        if (p1.pos.x > p2.pos.x) {
+            p2anim.z = 5
+            p1anim.z = 4
+        } else {
+            p2anim.z = 4
+            p1anim.z = 5
+        }
+
+        p1.opacity = 0
+        p2.opacity = 0
+    })
+
+    const bg1 = add([
+        sprite("bg1"),
+        pos(cw / 2, ch / 2),
+        anchor("center"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-2)
+    ])
+
+    const bg1_2 = add([
+        sprite("bg1"),
+        pos(cw / 2 + cw, ch / 2),
+        anchor("center"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-2)
+    ])
+
+    const bg2 = add([
+        sprite("bg2"),
+        pos(cw / 2, ch / 2 - 80),
+        anchor("center"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-1)
+    ])
+
+    onUpdate(() => {
+        chao.move(-dinospeed, 0)
+        chao2.move(-dinospeed, 0)
+        if (chao.pos.x <= (cw * -1)) {
+            chao.pos.x = cw
+        }
+        if (chao2.pos.x <= (cw * -1)) {
+            chao2.pos.x = cw
+        }
+    })
+    onUpdate(() => {
+        bg1.move(-2, 0)
+        bg1_2.move(-2, 0)
+        bg2.move(-1, 0)
+        if (bg1.pos.x <= (cw * -1)) {
+            bg1.pos.x = cw
+        }
+        if (bg1_2.pos.x <= (cw * -1)) {
+            bg1_2.pos.x = cw
+        }
+    })
+
+    //BG
+
+
 })

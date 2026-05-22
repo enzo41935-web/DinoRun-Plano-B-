@@ -1,53 +1,56 @@
-    async function floatAnim2() {
+    const p2anim = add([
+        sprite("p2"),
+        pos(30, 150),
+        anchor("bot"),
+        area(),
+        "p2anim",
+        "player1",
+        z(4),
+    ])
 
-        while (true) {
+    p2.runanim = "running"
+    p2.idleanim = "idle"
 
-            await Promise.all([
-
-                tween(
-                    p1picker.pos.y,
-                    224,
-                    1.2,
-                    (val) => {
-                        p1picker.pos.y = val
-                    },
-                    easings.easeInOutSine
-                ),
-
-                tween(
-                    p2picker.pos.y,
-                    220,
-                    1.2,
-                    (val) => {
-                        p2picker.pos.y = val
-                    },
-                    easings.easeInOutSine
-                )
-
-            ])
-
-            await Promise.all([
-
-                tween(
-                    p1picker.pos.y,
-                    220,
-                    1.2,
-                    (val) => {
-                        p1picker.pos.y = val
-                    },
-                    easings.easeInOutSine
-                ),
-
-                tween(
-                    p2picker.pos.y,
-                    224,
-                    1.2,
-                    (val) => {
-                        p2picker.pos.y = val
-                    },
-                    easings.easeInOutSine
-                )
-
-            ])
+    onUpdate(() => {   
+        if (p2.crouched) {
+            p2.runanim = "crouchedrun";
+            p2.idleanim = "crouchedidle";
+        }else{
+            p2.runanim = "running";
+            p2.idleanim = "idle";
         }
-    }
+    })
+
+    onUpdate(() => {
+
+        if (!p2.grounded) {
+
+            if (p2anim.curAnim() !== "jump") {
+                p2anim.play("jump")
+                p2anim.animSpeed = 0.5
+            }
+
+        } else if (difficulty != 0) {
+
+            if (p2anim.curAnim() !== p2.runanim) {
+                p2anim.play(p2.runanim)
+            }
+
+        } else {
+
+            if (p2anim.curAnim() !== "idle") {
+                p2anim.play("idle")
+            }
+
+        }
+
+    })
+
+    onUpdate(() => {
+        p2.lifes++
+        p2.opacity = 0.01
+        p2anim.pos = p2.pos
+        if (p2.grounded) {
+            p2anim.animSpeed = 1 + (difficulty * 0.1)
+        }
+    })

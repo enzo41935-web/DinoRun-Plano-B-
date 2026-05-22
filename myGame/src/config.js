@@ -20,17 +20,18 @@ globalThis.scenelist = [
 ]
 
 globalThis.sceneatlaunch = scenelist[
-    0
+    2
 ]
 globalThis.currentscene = ""
 
 //DEBUG MODE
-globalThis.debugmode = false
+globalThis.debugmode = true
 globalThis.debugboxshow = false
 globalThis.globaldebugboxposx = cw - 60
 globalThis.globaldebugboxposy = 0
 
 if (!debugmode) {
+    document.body.style.cursor = "none"
     window.addEventListener('beforeunload', function (e) {
         // Cancel the event
         e.preventDefault();

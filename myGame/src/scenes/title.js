@@ -412,8 +412,8 @@ scene("title", () => {
 
 
     // TRANSITION
-            logo.hidden = true
-            logo2.hidden = false
+    logo.hidden = true
+    logo2.hidden = false
 
     wait(0.1, () => {
         onUpdate(() => {
@@ -422,7 +422,7 @@ scene("title", () => {
         });
     });
 
-        wait(3, () => {
+    wait(3, () => {
         onUpdate(() => {
 
             logo.hidden = false
@@ -441,6 +441,167 @@ scene("title", () => {
                     go("start")
                 })
             })
+        }
+    })
+
+    //Players Animations
+
+    //P1
+
+    const p1anim = add([
+        sprite("p1"),
+        pos(30, 150),
+        anchor("bot"),
+        area(),
+        "p1anim",
+        z(4),
+    ])
+
+    p1.runanim = "running"
+    p1.idleanim = "idle"
+
+    onUpdate(() => {
+        if (p1.crouched) {
+            p1.runanim = "crouchedrun";
+            p1.idleanim = "crouchedidle";
+        } else {
+            p1.runanim = "running";
+            p1.idleanim = "idle";
+        }
+    })
+
+    onUpdate(() => {
+
+        if (!p1.grounded) {
+
+            if (p1anim.curAnim() !== "jump") {
+                p1anim.play("jump")
+                p1anim.animSpeed = 0.5
+            }
+
+        } else if (difficulty != 0) {
+
+            if (p1anim.curAnim() !== p1.runanim) {
+                p1anim.play(p1.runanim)
+            }
+
+        } else {
+
+            if (p1anim.curAnim() !== p1.idleanim) {
+                p1anim.play(p1.idleanim)
+            }
+
+        }
+
+    })
+
+    onUpdate(() => {
+        p1anim.pos = p1.pos
+        if (p1.grounded) {
+            p1anim.animSpeed = 1 + (difficulty * 0.1)
+        }
+    })
+
+    const p2anim = add([
+        sprite("p2"),
+        pos(30, 150),
+        anchor("bot"),
+        area(),
+        "p2anim",
+        z(4),
+    ])
+
+    p2.runanim = "running"
+    p2.idleanim = "idle"
+
+    onUpdate(() => {
+        if (p2.crouched) {
+            p2.runanim = "crouchedrun";
+            p2.idleanim = "crouchedidle";
+        } else {
+            p2.runanim = "running";
+            p2.idleanim = "idle";
+        }
+    })
+    let difficulty = 0
+    onUpdate(() => {
+
+        if (!p2.grounded) {
+
+            if (p2anim.curAnim() !== "jump") {
+                p2anim.play("jump")
+                p2anim.animSpeed = 0.5
+            }
+
+        } else if (difficulty != 0) {
+
+            if (p2anim.curAnim() !== p2.runanim) {
+                p2anim.play(p2.runanim)
+            }
+
+        } else {
+
+            if (p2anim.curAnim() !== p2.idleanim) {
+                p2anim.play(p2.idleanim)
+            }
+
+        }
+
+    })
+    onUpdate(() => {
+        p2anim.pos = p2.pos
+        if (p2.grounded) {
+            p2anim.animSpeed = 1 + (difficulty * 0.1)
+        }
+
+        if (p1.pos.x > p2.pos.x) {
+            p2anim.z = 5
+            p1anim.z = 4
+        } else {
+            p2anim.z = 4
+            p1anim.z = 5
+        }
+    })
+
+    p1.opacity = 0
+    p2.opacity = 0
+
+    const bg1 = add([
+        sprite("bg1"),
+        pos(0, ch / 2+20),
+        anchor("left"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-2)
+    ])
+
+    const bg1_2 = add([
+        sprite("bg1"),
+        pos(cw, ch / 2+20),
+        anchor("left"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-2)
+    ])
+
+    const bg2 = add([
+        sprite("bg2"),
+        pos(cw / 2, ch / 2 - 80),
+        anchor("center"),
+        opacity(0.5),
+        scale(1, 1),
+        z(-1)
+    ])
+
+    onUpdate(() => {
+        bg1.move(-2, 0)
+        bg1_2.move(-2, 0)
+        bg2.move(-1, 0)
+        if (bg1.pos.x <= (cw * -1)) {
+            bg1.pos.x = cw
+        }
+        if (bg1_2.pos.x <= (cw * -1)) {
+            bg1_2.pos.x = cw
         }
     })
 })
