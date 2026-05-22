@@ -1,5 +1,6 @@
 // imports
 
+
 kaplay({
     width: 480,
     height: 240,
@@ -9,5 +10,6 @@ kaplay({
 })
 
 await import("./import.js")
+
 
 go(sceneatlaunch)

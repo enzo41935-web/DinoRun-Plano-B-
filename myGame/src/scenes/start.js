@@ -83,9 +83,22 @@ scene("start", () => {
         "chaotitle",
     ])
 
+    // FX
+
+    const fade = add([
+        sprite("fade"),
+        pos(0, 0),
+        anchor("topleft"),
+        z(50),
+        "fade",
+        opacity(1),
+    ])
+
+
+
     // HUD
 
-    const p1lifesHUD= add([
+    const p1lifesHUD = add([
         text("3", {
             font: "pixel",
             size: 16,
@@ -120,7 +133,7 @@ scene("start", () => {
     })
 
     const p1pin = add([
-        text("ANA", {
+        text(p1name.toUpperCase(), {
             font: "pixel",
             size: 8,
             align: "center"
@@ -132,7 +145,7 @@ scene("start", () => {
     ])
 
     const p2pin = add([
-        text("ENZ", {
+        text(p2name.toUpperCase(), {
             font: "pixel",
             size: 8,
             align: "center"
@@ -426,8 +439,20 @@ scene("start", () => {
     let pterochance = 0
 
 
+    
     let difficulty = 0
-    wait(3, () => {
+    
+    wait(0.1,() => {
+        onUpdate(() => {
+            
+            fade.opacity = lerp(fade.opacity, 0, dt() * 1)
+        });
+    });
+
+
+    wait(5, () => {
+        onUpdate(() => {
+        });
         loop(10, () => {
             if (difficulty < 10 && !isgameover) {
                 difficulty += 1

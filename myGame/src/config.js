@@ -3,11 +3,11 @@
 globalThis.cw = 480
 globalThis.ch = 240
 
-globalThis.p1name = "Player 1"
-globalThis.p2name = "Player 2"
+globalThis.p1name = "P1"
+globalThis.p2name = "P2"
 
 globalThis.scenelist = [
-    "menu", //0
+    "names", //0
     "title", //1
     "start", //2
 ]
@@ -22,3 +22,12 @@ globalThis.debugmode = true
 globalThis.debugboxshow = false
 globalThis.globaldebugboxposx = cw - 60
 globalThis.globaldebugboxposy = 0
+
+if (!debugmode) {
+    window.addEventListener('beforeunload', function (e) {
+        // Cancel the event
+        e.preventDefault();
+        // Chrome requires returnValue to be set
+        e.returnValue = '';
+    });
+}

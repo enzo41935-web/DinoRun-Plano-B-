@@ -8,6 +8,7 @@ loadSprite("fade", "/sprites/fx/fade.png")
 // misc
 loadSprite("chaotitle", "/sprites/misc/ground.png")
 loadSprite("p1statue", "/sprites/players/p1statue.png")
+loadSprite("p2statue", "/sprites/players/p2statue.png")
 
 // hud
 loadSprite("logo", "/sprites/hud/logo.png")

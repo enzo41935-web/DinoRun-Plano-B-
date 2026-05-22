@@ -33,6 +33,15 @@ scene("title", () => {
         "logo",
     ])
 
+    const logo2 = add([
+        sprite("logo"),
+        pos(cw / 2, 55),
+        anchor("center"),
+        z(10),
+        opacity(0),
+        "logo",
+    ])
+
     const fade = add([
         sprite("fade"),
         pos(0, 0),
@@ -40,6 +49,15 @@ scene("title", () => {
         z(9),
         "fade",
         opacity(0),
+    ])
+
+    const fade2 = add([
+        sprite("fade"),
+        pos(0, 0),
+        anchor("topleft"),
+        z(9),
+        "fade",
+        opacity(1),
     ])
 
 
@@ -53,9 +71,9 @@ scene("title", () => {
     // ])
 
     const p1pin = add([
-        text("ANA", {
+        text(p1name.toUpperCase(), {
             font: "pixel",
-            size: 8,
+            size: 16,
             align: "center"
         }),
         anchor("bot"),
@@ -65,9 +83,9 @@ scene("title", () => {
     ])
 
     const p2pin = add([
-        text("ENZ", {
+        text(p2name.toUpperCase(), {
             font: "pixel",
-            size: 8,
+            size: 16,
             align: "center"
         }),
         anchor("bot"),
@@ -394,6 +412,23 @@ scene("title", () => {
 
 
     // TRANSITION
+            logo.hidden = true
+            logo2.hidden = false
+
+    wait(0.1, () => {
+        onUpdate(() => {
+            fade2.opacity = lerp(fade2.opacity, 0, dt() * 3)
+            logo2.opacity = lerp(logo2.opacity, 1, dt() * 3)
+        });
+    });
+
+        wait(3, () => {
+        onUpdate(() => {
+
+            logo.hidden = false
+            logo2.hidden = true
+        });
+    });
 
     onUpdate(() => {
         if (countdownend) {
