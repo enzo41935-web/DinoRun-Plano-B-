@@ -37,9 +37,12 @@ scene("start", () => {
         isgameover = true
         if (p1.alive || !p2.alive) {
             winnerplayername = p1name
+            winnerplayernum = 1
         } else if (!p1.alive || p2.alive) {
             winnerplayername = p2name
+            winnerplayernum = 2
         } else {
+            winnerplayernum = 0
             winnerplayername = "???"
         }
         const gameendtxt = add([
@@ -103,7 +106,7 @@ scene("start", () => {
         color(255, 255, 255),
         "floor",
         z(2),
-        opacity(0.1),
+        opacity(0),
     ])
 
     const chao = add([
@@ -120,7 +123,7 @@ scene("start", () => {
         pos(cw, ch),
         anchor("botleft"),
         "chaotitle",
-        scale(1.1,1),
+        scale(1.1, 1),
         z(3)
     ])
 
@@ -152,44 +155,170 @@ scene("start", () => {
 
     // HUD
 
-    const p1lifesHUD = add([
+    const p1lifesTXT = add([
         text("3", {
             font: "pixel",
+            bold: true,
             size: 16,
-            align: "center"
+            align: "center",
+            styles: {
+                x: {
+                    scale: 0.5,
+                }
+            }
         }),
-        color("#00ff00"),
-        pos(10, 10),
-        fixed(),
-        z(10)
-    ])
-
-    const p2lifesHUD = add([
-        text("3", {
-            font: "pixel",
-            size: 16,
-            align: "center"
-        }),
-        color("#7878ff"),
+        color("#99e550"),
         pos(30, 10),
         fixed(),
         z(10)
     ])
 
-    const difficultytxt = add([
-        text("0", {
-            font: "pixel",
-            size: 16,
-            align: "center"
-        }),
-        color("#ff0000"),
-        pos(cw - 40, 10),
+    const p1lifesicon = add([
+        sprite("p1icon"),
+        pos(5, 5),
         fixed(),
         z(10)
     ])
 
+
+    const p2lifesTXT = add([
+        text("3", {
+            font: "pixel",
+            size: 16,
+            align: "center",
+            styles: {
+                x: {
+                    scale: 0.5,
+                }
+            }
+        }),
+        color("#639bff"),
+        pos(30, 35),
+        fixed(),
+        z(10)
+    ])
+
+    const p2lifesicon = add([
+        sprite("p2icon"),
+        pos(5, 30),
+        fixed(),
+        z(10)
+    ])
+
+    const difficultytxt = add([
+        text("", {
+            font: "pixel",
+            size: 8,
+            align: "center"
+        }),
+        color("#000000"),
+        opacity(1),
+        pos(cw - 90, 60),
+        fixed(),
+        z(10)
+    ])
+
+
     onUpdate(() => {
-        difficultytxt.text = difficulty
+        if (difficulty >= 1 && difficulty <= 2) {
+            difficultytxt.text = "MUITO FACIL"
+            textformatchtdifficultyend = "MUITO FACIL"
+            colorformatchtdifficultyend = rgb(64, 190, 148)
+            difficultytxt.color = rgb(64, 190, 148)
+            difficultytxt.pos.x = cw - 85
+            
+        }
+
+        else if (difficulty >= 3 && difficulty <= 4) {
+            difficultytxt.text = "FACIL"
+            textformatchtdifficultyend = "FACIL"
+            colorformatchtdifficultyend = rgb(153, 229, 80)
+            difficultytxt.color = rgb(153, 229, 80)
+            difficultytxt.pos.x = cw - 70
+        }
+
+        else if (difficulty >= 5 && difficulty <= 6) {
+            difficultytxt.text = "DESAFIADOR"
+            textformatchtdifficultyend = "DESAFIADOR"
+            colorformatchtdifficultyend = rgb(255, 162, 20)
+            difficultytxt.color = rgb(255, 162, 20)
+            difficultytxt.pos.x = cw - 85
+        }
+
+        else if (difficulty >= 7 && difficulty <= 8) {
+            difficultytxt.text = "DIFICIL"
+            textformatchtdifficultyend = "DIFICIL"
+            colorformatchtdifficultyend = rgb(186, 35, 53)
+            difficultytxt.color = rgb(186, 35, 53)
+            difficultytxt.pos.x = cw - 73
+        }
+
+        else if (difficulty >= 9) {
+            difficultytxt.text = "INSANO!!!"
+            textformatchtdifficultyend = "INSANO!!!"
+            colorformatchtdifficultyend = rgb(255, 0, 30)
+            difficultytxt.color = rgb(255, 0, 30)
+            difficultytxt.pos.x = cw - 77
+        }
+    })
+
+    let time = 0
+
+    const timertxt = add([
+        text("00:00", {
+            font: "pixel",
+            size: 8,
+        }),
+        pos(cw - 70.5, 8),
+        fixed(),
+    ])
+    wait(5, () => {
+        onUpdate(() => {
+            time += (dt())
+
+            const minutes = Math.floor(time / 60)
+            const seconds = Math.floor(time % 60)
+
+            const formattedMinutes = String(minutes).padStart(2, "0")
+            const formattedSeconds = String(seconds).padStart(2, "0")
+
+            timertxt.text = `${formattedMinutes}:${formattedSeconds}`
+            matchtime = `${formattedMinutes}:${formattedSeconds}`
+        })
+    });
+
+
+    const dificuldademeter = add([
+        sprite("dificuldade"),
+        anchor("bot"),
+        pos(cw - 60, 50),
+        fixed(),
+        "dificuldade",
+        z(10)
+    ])
+
+    const dificuldadepick = add([
+        sprite("dificuldadepick"),
+        anchor("bot"),
+        pos(cw - 60, 53),
+        fixed(),
+        "dificuldadepin",
+        rotate(-75),
+        z(11)
+    ])
+
+    let multiplostempo = 1
+
+    wait(5, () => {
+        onUpdate(() => {
+            if (dificuldadepick.angle < 75) { dificuldadepick.angle += (0.521 * multiplostempo) * dt() }
+        })
+        wait(60, () => {
+            multiplostempo += 4
+        });
+        wait(90, () => {
+            multiplostempo += -3.5
+        });
     })
 
     const p1pin = add([
@@ -489,8 +618,8 @@ scene("start", () => {
     p2.lifes = 3
 
     onUpdate(() => {
-        p1lifesHUD.text = p1.lifes
-        p2lifesHUD.text = p2.lifes
+        p1lifesTXT.text = ("[x]x[/x]" + p1.lifes)
+        p2lifesTXT.text = ("[x]x[/x]" + p2.lifes)
     })
 
     //CACTUS
@@ -502,9 +631,8 @@ scene("start", () => {
     let dinospeed = 1
     let pterochance = 0
 
-
-
     let difficulty = 0
+
 
     let fadein = true
     wait(0.1, () => {
@@ -517,12 +645,14 @@ scene("start", () => {
     });
 
 
+    if (p1name == "67_" && p2name == "67_") { difficulty = 67 }
     wait(5, () => {
         onUpdate(() => {
         });
-        loop(10, () => {
-            if (difficulty < 10 && !isgameover) {
+        loop(15, () => {
+            if (difficulty < 11 && !isgameover) {
                 difficulty += 1
+                checkdifficulty()
             }
         })
     })
@@ -537,8 +667,8 @@ scene("start", () => {
                 break;
             case 1:
                 longenemychance = 0;
-                obstaclewait_min = 1;
-                obstaclewait_max = 5;
+                obstaclewait_min = 1.2;
+                obstaclewait_max = 4.8;
                 pterochance = 0;
                 dinospeed = 200;
                 break;
@@ -547,71 +677,71 @@ scene("start", () => {
                 longenemychance = 0;
                 obstaclewait_min = 1;
                 obstaclewait_max = 4;
-                pterochance = 0.05;
+                pterochance = 0.04;
                 dinospeed = 250;
                 break;
 
             case 3:
                 longenemychance = 0;
-                obstaclewait_min = 1;
-                obstaclewait_max = 3;
-                pterochance = 0.1;
-                dinospeed = 300;
+                obstaclewait_min = 0.85;
+                obstaclewait_max = 3.2;
+                pterochance = 0.08;
+                dinospeed = 325;
                 break;
 
             case 4:
-                longenemychance = 0;
-                obstaclewait_min = 0.75;
-                obstaclewait_max = 2.75;
-                pterochance = 0.125;
-                dinospeed = 350;
+                longenemychance = 0.015;
+                obstaclewait_min = 0.65;
+                obstaclewait_max = 2.4;
+                pterochance = 0.12;
+                dinospeed = 375;
                 break;
 
             case 5:
-                longenemychance = 0;
-                obstaclewait_min = 0.5;
-                obstaclewait_max = 2.5;
-                pterochance = 0.15;
-                dinospeed = 400;
+                longenemychance = 0.03;
+                obstaclewait_min = 0.45;
+                obstaclewait_max = 2;
+                pterochance = 0.18;
+                dinospeed = 425;
                 break;
 
             case 6:
-                longenemychance = 0.0125;
-                obstaclewait_min = 0.35;
-                obstaclewait_max = 2.75;
-                pterochance = 0.175;
+                longenemychance = 0.04;
+                obstaclewait_min = 0.3;
+                obstaclewait_max = 1.7;
+                pterochance = 0.24;
                 dinospeed = 500;
                 break;
 
             case 7:
-                longenemychance = 0.025;
-                obstaclewait_min = 0.2;
-                obstaclewait_max = 3;
-                pterochance = 0.2;
+                longenemychance = 0.05;
+                obstaclewait_min = 0.22;
+                obstaclewait_max = 1.45;
+                pterochance = 0.32;
                 dinospeed = 600;
                 break;
 
             case 8:
-                longenemychance = 0.035;
-                obstaclewait_min = 0.25;
-                obstaclewait_max = 2.5;
-                pterochance = 0.25;
-                dinospeed = 650;
+                longenemychance = 0.067;
+                obstaclewait_min = 0.18;
+                obstaclewait_max = 1.25;
+                pterochance = 0.38;
+                dinospeed = 700;
                 break;
 
             case 9:
-                longenemychance = 0.05;
-                obstaclewait_min = 0.25;
-                obstaclewait_max = 2.25;
-                pterochance = 0.3;
-                dinospeed = 775;
+                longenemychance = 0.2;
+                obstaclewait_min = 0.14;
+                obstaclewait_max = 1.1;
+                pterochance = 0.44;
+                dinospeed = 800;
                 break;
 
             case 10:
-                longenemychance = 0.1;
-                obstaclewait_min = 0.2;
-                obstaclewait_max = 2;
-                pterochance = 0.4;
+                longenemychance = 0.3;
+                obstaclewait_min = 0.1;
+                obstaclewait_max = 1;
+                pterochance = 0.5;
                 dinospeed = 900;
                 break;
 
@@ -641,7 +771,9 @@ scene("start", () => {
 
 
     const cactus = [];
+    const cactussprite = [];
     const ptero = [];
+    const pterosprite = [];
 
     function SpawnEnemies() {
 
@@ -651,32 +783,56 @@ scene("start", () => {
                 pos(cw + 20, 170),
                 rect(10, 40),
                 area(),
-                opacity(1),
+                opacity(0),
                 "cactus",
                 "obstacle"
             ]);
 
+            const cacsprite = add([
+                pos(cw + 20, 210),
+                sprite("cactus1"),
+                anchor("bot"),
+                area(),
+                opacity(1),
+                "cactus",
+            ]);
+
             cac.name = `cactus-${cactus.length + 1}`;
+            cacsprite.name = `cactussprite-${cactus.length + 1}`;
 
             cactus.push(cac);
+            cactussprite.push(cac);
 
             //console.log("Cactus criado.");
             //console.log("Inimigos na tela: " + cactus.length + ptero.length)
         } else {
 
             const pte = add([
-                pos(cw + 20, 130),
+                pos(cw + 10, 110),
                 rect(20, 20),
                 color(255, 0, 0),
                 area(),
-                opacity(1),
+                opacity(0),
                 "ptero",
                 "obstacle"
             ]);
 
-            pte.name = `ptero-${ptero.length + 1}`;
+            const ptesprite = add([
+                sprite("ptero"),
+                pos(cw + 20, 140),
+                anchor("bot"),
+                area(),
+                opacity(1),
+                "ptero",
+            ]);
 
+            pte.name = `ptero-${ptero.length + 1}`;
+            ptesprite.name = `pterosprite-${ptero.length + 1}`;
+            ptesprite.play("fly")
+            ptesprite.animSpeed = 0.3
             ptero.push(pte);
+            pterosprite.push(pte);
+
 
             //console.log("Ptero criado.");
             //console.log("Inimigos na tela: " + cactus.length + ptero.length);
@@ -695,7 +851,6 @@ scene("start", () => {
 
         }
     }
-
     SpawnEnemies();
     obstaclesspawncount +=
         onUpdate(() => {
@@ -910,6 +1065,4 @@ scene("start", () => {
     })
 
     //BG
-
-
 })

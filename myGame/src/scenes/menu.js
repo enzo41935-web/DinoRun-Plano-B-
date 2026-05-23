@@ -18,12 +18,10 @@ scene("menu", () => {
         opacity(1),
         rotate(0),
         shader("hueShift", {
-            u_hue: 0.0,
+            u_hue: 1,
         }),
         "p1statue"
     ])
-
-    const 
 
     function repeat(delay, times, callback) {
 

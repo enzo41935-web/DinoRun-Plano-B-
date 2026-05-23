@@ -231,9 +231,9 @@ scene("names", () => {
             p1picker.hidden = true
             p1readybutton.play("on")
 
-            P1CHAR1txt.color = rgb(0, 255, 0)
-            P1CHAR2txt.color = rgb(0, 255, 0)
-            P1CHAR3txt.color = rgb(0, 255, 0)
+            P1CHAR1txt.color = rgb(153, 229, 80)
+            P1CHAR2txt.color = rgb(153, 229, 80)
+            P1CHAR3txt.color = rgb(153, 229, 80)
 
         } else {
 
@@ -414,9 +414,9 @@ scene("names", () => {
             p2picker.hidden = true
             p2readybutton.play("on")
 
-            P2CHAR1txt.color = rgb(0, 255, 0)
-            P2CHAR2txt.color = rgb(0, 255, 0)
-            P2CHAR3txt.color = rgb(0, 255, 0)
+            P2CHAR1txt.color = rgb(153, 229, 80)
+            P2CHAR2txt.color = rgb(153, 229, 80)
+            P2CHAR3txt.color = rgb(153, 229, 80)
 
         } else {
 

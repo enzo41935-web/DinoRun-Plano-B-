@@ -6,7 +6,12 @@ globalThis.ch = 240
 globalThis.p1name = "P1"
 globalThis.p2name = "P2"
 
-globalThis.winnerplayername = "p?"
+globalThis.matchtime = "00:00"
+globalThis.textformatchtdifficultyend = "I DONT KNOW LOL"
+globalThis.colorformatchtdifficultyend = rgb(255, 0, 0)
+
+globalThis.winnerplayernum = 0
+globalThis.winnerplayername = "???"
 
 globalThis.FTX = 3
 globalThis.p1points = 0
@@ -20,7 +25,7 @@ globalThis.scenelist = [
 ]
 
 globalThis.sceneatlaunch = scenelist[
-    2
+    0
 ]
 globalThis.currentscene = ""
 

@@ -1,8 +1,8 @@
 loadShader(
-  "hue",
+  "hueShift",
   null,
   `
-uniform float u_hue;
+uniform float u_amount;
 
 vec3 hueShift(vec3 color, float angle) {
     const vec3 k = vec3(0.57735, 0.57735, 0.57735);
@@ -16,7 +16,8 @@ vec3 hueShift(vec3 color, float angle) {
 
 vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     vec4 c = def_frag();
-    c.rgb = hueShift(c.rgb, u_hue);
+    float angle = u_amount * 6.28318530718;
+    c.rgb = hueShift(c.rgb, angle);
     return c;
 }
 `

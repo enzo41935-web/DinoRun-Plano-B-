@@ -9,6 +9,7 @@ loadSprite("fade", "/sprites/fx/fade.png")
 loadSprite("chaotitle", "/sprites/misc/ground.png")
 loadSprite("p1statue", "/sprites/players/p1statue.png")
 loadSprite("p2statue", "/sprites/players/p2statue.png")
+loadSprite("trophy", "/sprites/player/trophy.png")
 
 
 //keys
@@ -42,7 +43,7 @@ loadSprite("keys", "/sprites/hud/keys/W/w1.png", {
         rightP: { from: 15, to: 15 },
     },
 })
-
+//players
 loadSprite("p1", "/sprites/players/P1/p1.png", {
     sliceX: 18,
     sliceY: 1,
@@ -65,6 +66,13 @@ loadSprite("p1", "/sprites/players/P1/p1.png", {
         jump: {
             from: 4,
             to: 1,
+            loop: false,
+        },
+
+        rjump: {
+            from: 1,
+            to: 4,
+            loop: false,
         },
 
         crouchedrun: {
@@ -103,6 +111,13 @@ loadSprite("p2", "/sprites/players/P2/p2.png", {
         jump: {
             from: 4,
             to: 1,
+            loop: false,
+        },
+
+        rjump: {
+            from: 1,
+            to: 4,
+            loop: false,
         },
 
         crouchedrun: {
@@ -137,11 +152,15 @@ loadSprite("check", "/sprites/hud/checkready.png", {
     },
 })
 
+loadSprite("dificuldade", "/sprites/hud/dificuldade.png")
+loadSprite("dificuldadepick", "/sprites/hud/dificuldadepick.png")
+
 loadSprite("logo", "/sprites/hud/logo.png")
-// loadSprite("p1pin", "/sprites/hud/p1pin.png")
-// loadSprite("p2pin", "/sprites/hud/p2pin.png")
+loadSprite("p1icon", "/sprites/hud/p1icon.png")
+loadSprite("p2icon", "/sprites/hud/p2icon.png")
 loadSprite("p1picker", "/sprites/player/p1picker.png")
 loadSprite("p2picker", "/sprites/player/p2picker.png")
+
 
 // Sounds
 loadSound("jump", "/sounds/jump.wav")
@@ -151,3 +170,17 @@ loadSprite("cactus1", "/sprites/world/cactus1.png")
 loadSprite("cactus2", "/sprites/world/cactus2.png")
 loadSprite("bg1", "/sprites/world/bg1.png")
 loadSprite("bg2", "/sprites/world/bg2.png")
+
+//enemy
+
+loadSprite("ptero", "/public/sprites/world/ptero.png", {
+    sliceX: 2,
+    sliceY: 1,
+    anims: {
+        fly: {
+            from: 0,
+            to: 1,
+            loop: true,
+        }
+    }
+})
