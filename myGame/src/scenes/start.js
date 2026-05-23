@@ -111,7 +111,7 @@ scene("start", () => {
 
     const chao = add([
         sprite("chaotitle"),
-        pos(0, ch),
+        pos(0, ch-3),
         anchor("botleft"),
         "chaotitle",
         z(3),
@@ -120,7 +120,7 @@ scene("start", () => {
 
     const chao2 = add([
         sprite("chaotitle"),
-        pos(cw, ch),
+        pos(cw, ch-3),
         anchor("botleft"),
         "chaotitle",
         scale(1.1, 1),

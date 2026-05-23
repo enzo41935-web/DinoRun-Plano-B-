@@ -113,11 +113,12 @@ scene("title", () => {
     const infotext = add([
         text("PULE PARA PREPARAR\nAGAIXE PARA DESPREPARAR\n\n W: Pulo         |  Cima: Pulo       \nS: Agaixar    |  Baixo: Agaixar", {
             font: "pixel",
-            size: 8,
+            size: 12,
             align: "center"
         }),
+        anchor("center"),
         color("#ffffff"),
-        pos(175, 120),
+        pos(cw/2, 140),
     ])
     infotext.hidden = true
 

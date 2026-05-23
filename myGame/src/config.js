@@ -7,7 +7,7 @@ globalThis.p1name = "P1"
 globalThis.p2name = "P2"
 
 globalThis.matchtime = "00:00"
-globalThis.textformatchtdifficultyend = "I DONT KNOW LOL"
+globalThis.textformatchtdifficultyend = "uhhhhhh"
 globalThis.colorformatchtdifficultyend = rgb(255, 0, 0)
 
 globalThis.winnerplayernum = 0
@@ -30,7 +30,7 @@ globalThis.sceneatlaunch = scenelist[
 globalThis.currentscene = ""
 
 //DEBUG MODE
-globalThis.debugmode = true
+globalThis.debugmode = false
 globalThis.debugboxshow = false
 globalThis.globaldebugboxposx = cw - 60
 globalThis.globaldebugboxposy = 0
