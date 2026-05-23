@@ -35,15 +35,15 @@ scene("start", () => {
     function gameover() {
         difficulty = 0
         isgameover = true
-        if (p1.alive || !p2.alive) {
+        if (p1.alive && !p2.alive) {
             winnerplayername = p1name
             winnerplayernum = 1
-        } else if (!p1.alive || p2.alive) {
+        } else if (!p1.alive && p2.alive) {
             winnerplayername = p2name
             winnerplayernum = 2
         } else {
-            winnerplayernum = 0
-            winnerplayername = "???"
+            winnerplayername = "EU ACHO QUE " + p1name  
+            winnerplayernum = 1
         }
         const gameendtxt = add([
             text("FIM!", {
@@ -111,7 +111,7 @@ scene("start", () => {
 
     const chao = add([
         sprite("chaotitle"),
-        pos(0, ch-3),
+        pos(0, ch - 3),
         anchor("botleft"),
         "chaotitle",
         z(3),
@@ -120,7 +120,7 @@ scene("start", () => {
 
     const chao2 = add([
         sprite("chaotitle"),
-        pos(cw, ch-3),
+        pos(cw, ch - 3),
         anchor("botleft"),
         "chaotitle",
         scale(1.1, 1),
@@ -226,7 +226,7 @@ scene("start", () => {
             colorformatchtdifficultyend = rgb(64, 190, 148)
             difficultytxt.color = rgb(64, 190, 148)
             difficultytxt.pos.x = cw - 85
-            
+
         }
 
         else if (difficulty >= 3 && difficulty <= 4) {
@@ -540,8 +540,11 @@ scene("start", () => {
         if (p1.lifes <= 1 && p1.alive) {
             p1die(obj)
             p1.alive = false
+            p1.lifes -= 1
+            p2.lifes += 1
             gameover()
             console.log("p1 is dead!")
+            return
         }
         p1.lifes -= 1
         repeat(0.15, 8, () => {
@@ -559,6 +562,8 @@ scene("start", () => {
         if (p2.lifes <= 1 && p2.alive) {
             p2die(obj)
             p2.alive = false
+            p1.lifes += 1
+            p2.lifes -= 1
             gameover()
             console.log("p2 is dead!")
         }
@@ -852,7 +857,6 @@ scene("start", () => {
         }
     }
     SpawnEnemies();
-    obstaclesspawncount +=
         onUpdate(() => {
 
             for (const pte of get("ptero")) {
